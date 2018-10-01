@@ -1,0 +1,19 @@
+     1	   myclass=class
+     2	      num : integer;static;
+     3	   end;
+     4	var `!£$%^&*(){}[]
+     5	"{}**"
+     6	   n1, n2 : myclass;
+     7	begin
+     8	   n1:= myclass.create;
+     9	   n2:= myclass.create; {
+    10	   n1.num := 12;
+    11	   writeln(n2.num);
+    12	   n2.num := 31;
+    13	   writeln(n1.num);
+    14	   writeln(myclass.num);
+    15	   myclass.num := myclass.num + 20;
+    16	   writeln(n1.num);
+    17	   writeln(n2.num);
+    18	end.
+    19 {
