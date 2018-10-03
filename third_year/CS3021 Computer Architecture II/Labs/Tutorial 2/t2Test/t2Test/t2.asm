@@ -83,10 +83,10 @@ q:		mov		rax, [rsp+40]
 
 public qns
 
-qns:	;sub		rsp, 32
+qns:	sub		rsp, 32
 		lea		rcx, fqns
 		call	printf
-		;add		rsp, 32
+		add		rsp, 32
 		mov		rax, 0
 		ret		0
 
