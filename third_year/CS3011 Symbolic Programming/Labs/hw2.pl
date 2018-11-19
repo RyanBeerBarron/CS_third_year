@@ -1,4 +1,21 @@
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 s1 --> s1(_).
 s1(Count) --> ublock(Count,0), vblock(Count).
 
@@ -9,6 +26,27 @@ ublock(X,X) --> [2].
 vblock(0) --> [].
 vblock(Count) --> [0], vblock(Count).
 vblock(Count) --> [1], {NewCount is Count - 2}, vblock(NewCount). 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 s2 --> col(Col1),nat(Nat1),pet(Pet1),col(Col2),nat(Nat2),pet(Pet2),col(Col3),nat(Nat3),pet(Pet3), 
 	{Col1 \= Col2, Col2 \= Col3, Col1 \= Col3},
@@ -31,16 +69,35 @@ lex(zebra,pet).
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 s3(0) --> [].
 s3(Sum) --> [H], s3(Newsum), {H \= [], Sum is Newsum + H}.
 
 %p(Sum, Element) :- member(Element, L), mkList(Sum, L).
 %s3(Sum) --> [M], s3(Newsum), {Sum is Newsum+M, member(M,List), mkList(Sum,M)}.
-*/
 
 %sumList(0, []).
 %sumList(Sum, [H|T]). 
+*/
+
+
 
 
 s3(0) --> [].
@@ -51,4 +108,24 @@ mkList(X,[H|T]) :- X=H, NewX is X-1, NewX >= 0, mkList(NewX, T).
 
 member(H,[H|_]).
 member(X,[_|T]) :- member(X,T).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
