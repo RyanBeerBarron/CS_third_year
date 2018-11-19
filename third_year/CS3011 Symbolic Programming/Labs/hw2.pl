@@ -1,20 +1,14 @@
-s1 --> s1(_).
-s1(Count) --> ublock(Count), vblock(Count).
 
-ublock(Count) --> [1], ublock(Count).
-ublock(Count) --> [0],ublock(NewCount), {Count is NewCount + 1}.
-ublock(0) --> [2].
+s1 --> s1(_).
+s1(Count) --> ublock(Count,0), vblock(Count).
+
+ublock(Count,Acc) --> [1], ublock(Count,Acc).
+ublock(Count,Acc) --> [0], {NewAcc is Acc + 1}, ublock(Count,NewAcc).
+ublock(X,X) --> [2].
 
 vblock(0) --> [].
 vblock(Count) --> [0], vblock(Count).
 vblock(Count) --> [1], {NewCount is Count - 2}, vblock(NewCount). 
-
-
-
-
-
-
-
 
 s2 --> col(Col1),nat(Nat1),pet(Pet1),col(Col2),nat(Nat2),pet(Pet2),col(Col3),nat(Nat3),pet(Pet3), 
 	{Col1 \= Col2, Col2 \= Col3, Col1 \= Col3},

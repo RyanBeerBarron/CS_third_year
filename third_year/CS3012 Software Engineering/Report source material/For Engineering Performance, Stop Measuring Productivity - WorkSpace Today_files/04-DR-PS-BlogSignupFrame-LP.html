@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title>WorkSpace Today Sign-up</title>
+
+<style type="text/css">
+    body {
+        background-color: #2e3844;
+    }
+    #main_form {
+        width: 220px;
+        font-family:Arial, Helvetica, sans-serif;
+        font-size:14px;
+        text-align:left;
+        color: #FFFFFF;
+        margin: 0 auto;
+    }
+    .powerForm > div {
+        padding-bottom: .25em;
+        max-width: 220px;
+    }
+    #sidebar .widget-right .powerForm > div:first-child {
+        margin-left: 0 !important;
+    }
+    .powerForm .formHeader {
+        padding-bottom: .25em !important;
+    }
+    p.formInstructions {
+        margin-bottom: 0;
+    }
+    .miniForm input, .miniForm select, .miniForm textarea {
+        max-width: 220px;
+    }
+    .pure-form button[type=submit] {
+    	min-width: 200px !important;
+    	max-width: 220px !important;
+        margin-top: 0 !important;
+    }
+</style>
+
+</head>
+
+<body style="">
+   
+<script src="04-DR-PS-BlogSignupFrame-LP_data/jquery_002.js"></script>
+
+<!-- begin powerform module -->
+
+<!-- core styles and script - do not remove -->
+
+<link href="04-DR-PS-BlogSignupFrame-LP_data/jquery.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="04-DR-PS-BlogSignupFrame-LP_data/jquery.js"></script>
+
+<!-- end core styles and script -->
+
+<!--
+--------------------------------------------------
+edit form container width if desired
+small sidebar form = 330px
+larger form = 500px
+no less than 325px
+when using size of 400px or less, add class "miniForm" to form tag
+(class="powerForm pure-form miniForm")
+--------------------------------------------------
+-->
+
+<!-- plugin initialization and options -->
+    
+<script type="text/javascript">
+$(function(){
+    $('#powerForm').plcmPowerForm({
+        elqFormName: '04-DR-PS-BlogSignup-WorkspaceToday', //a value is required for submission to Eloqua
+        successPage: 'http://response.polycom.com/04-DR-PS-BlogSignupFrame-TY', //required if form will be expecting success page URL to be provided - must be absolute path
+        progressiveProfiling: false, //if false, will pre-populate but not hide fields - takes precedence over allowShortForm
+        leadsrcHidden: 'Web Inquiry - PCOM', //default source to be used on the form 'leadsrc' field unless query parameters exist to override
+        forceHost: 'none' //web address to override actual server-related settings
+    });
+});
+</script>
+
+<!-- end plugin initialization -->
+
+<div id="main_form">
+
+    <form name="powerForm" class="powerForm pure-form miniForm" id="powerForm" action="https://s1078.t.eloqua.com/e/f2" method="post" style="position: relative;" target="_self" novalidate="novalidate"><input type="hidden" name="elqFormName" value="04-DR-PS-BlogSignup-WorkspaceToday"><input type="hidden" name="SuccessPage" value="http://response.polycom.com/04-DR-PS-BlogSignupFrame-TY"><input type="hidden" name="cn" value=""><input type="hidden" name="cnid" value=""><input type="hidden" name="src" value="website"><input type="hidden" name="link" value=""><input type="hidden" name="leadsrc" value="Web Inquiry - PCOM"><input type="hidden" name="route" value=""><input type="hidden" name="list" value=""><input type="hidden" name="InterestedIn" value=""><input type="hidden" name="partner" value=""><input type="hidden" name="partnerref" value=""><input type="hidden" name="EmailOptOut" value=""><input type="hidden" name="elqSiteID" value="1078"><input type="hidden" name="ClearAll" value=""><input type="hidden" name="ClearAllEmailAddress" value=""><input type="hidden" name="Browser" value="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0"><input type="hidden" name="HasCookie" value="N"><input type="hidden" name="HasRecord" value=""><input type="hidden" name="IPLocation" value="Y"><input type="hidden" name="DetectedCountry" value="Ireland"><input type="hidden" name="DetectedRegion" value="L"><input type="hidden" name="DetectedOrganization" value="Trinity College Dublin"><input type="hidden" name="DetectedISP" value="Trinity College Dublin"><input type="hidden" name="gclid" value=""><input type="hidden" name="poc_campaign" value=""><input type="hidden" name="poc_content" value=""><input type="hidden" name="utm_campaign" value=""><input type="hidden" name="utm_content" value=""><input type="hidden" name="utm_medium" value="direct"><input type="hidden" name="utm_source" value="direct"><input type="hidden" name="utm_term" value=""><input type="hidden" name="FormName" value="04-DR-PS-BlogSignup-WorkspaceToday"><input type="hidden" name="FormURL" value="http://response.polycom.com/04-DR-PS-BlogSignupFrame-LP">
+
+<!-- contact fields - do not remove -->
+
+        <div class="stackedField">
+            <label for="Email">Email Address<span class="requiredField">*</span></label>
+            <input name="Email" id="Email" type="email">
+        </div>
+
+<!-- end contact fields -->
+
+<!-- contact fields - do not remove -->
+        
+        <div class="stackedField">
+            <label for="Country">Country<span class="requiredField">*</span></label>
+            <select name="Country" id="Country">
+            <option value="">- Please select -</option><option value="Afghanistan">Afghanistan</option><option value="Åland Islands">Åland Islands</option><option value="Albania">Albania</option><option value="Algeria">Algeria</option><option value="American Samoa">American Samoa</option><option value="Andorra">Andorra</option><option value="Angola">Angola</option><option value="Anguilla">Anguilla</option><option value="Antarctica">Antarctica</option><option value="Antigua and Barbuda">Antigua and Barbuda</option><option value="Argentina">Argentina</option><option value="Armenia">Armenia</option><option value="Aruba">Aruba</option><option value="Australia">Australia</option><option value="Austria">Austria</option><option value="Azerbaijan">Azerbaijan</option><option value="Bahamas">Bahamas</option><option value="Bahrain">Bahrain</option><option value="Bangladesh">Bangladesh</option><option value="Barbados">Barbados</option><option value="Belarus">Belarus</option><option value="Belgium">Belgium</option><option value="Belize">Belize</option><option value="Benin">Benin</option><option value="Bermuda">Bermuda</option><option value="Bhutan">Bhutan</option><option value="Bolivia">Bolivia</option><option value="Bonaire, Sint Eustatius and Saba">Bonaire, Sint Eustatius and Saba</option><option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option><option value="Botswana">Botswana</option><option value="Bouvet Island">Bouvet Island</option><option value="Brazil">Brazil</option><option value="British Indian Ocean Territory">British Indian Ocean Territory</option><option value="Brunei Darussalam">Brunei Darussalam</option><option value="Bulgaria">Bulgaria</option><option value="Burkina Faso">Burkina Faso</option><option value="Burundi">Burundi</option><option value="Cambodia">Cambodia</option><option value="Cameroon">Cameroon</option><option value="Canada">Canada</option><option value="Cape Verde">Cape Verde</option><option value="Cayman Islands">Cayman Islands</option><option value="Central African Republic">Central African Republic</option><option value="Chad">Chad</option><option value="Chile">Chile</option><option value="China">China</option><option value="Christmas Island">Christmas Island</option><option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option><option value="Colombia">Colombia</option><option value="Comoros">Comoros</option><option value="Congo">Congo</option><option value="Congo, The Democratic Republic of The">Congo, The Democratic Republic of The</option><option value="Cook Islands">Cook Islands</option><option value="Costa Rica">Costa Rica</option><option value="Côte D'ivoire">Côte D'ivoire</option><option value="Croatia">Croatia</option><option value="Curacao">Curacao</option><option value="Cyprus">Cyprus</option><option value="Czech Republic">Czech Republic</option><option value="Denmark">Denmark</option><option value="Djibouti">Djibouti</option><option value="Dominica">Dominica</option><option value="Dominican Republic">Dominican Republic</option><option value="Ecuador">Ecuador</option><option value="Egypt">Egypt</option><option value="El Salvador">El Salvador</option><option value="Equatorial Guinea">Equatorial Guinea</option><option value="Eritrea">Eritrea</option><option value="Estonia">Estonia</option><option value="Ethiopia">Ethiopia</option><option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option><option value="Faroe Islands">Faroe Islands</option><option value="Fiji">Fiji</option><option value="Finland">Finland</option><option value="France">France</option><option value="French Guiana">French Guiana</option><option value="French Polynesia">French Polynesia</option><option value="French Southern Territories">French Southern Territories</option><option value="Gabon">Gabon</option><option value="Gambia">Gambia</option><option value="Georgia">Georgia</option><option value="Germany">Germany</option><option value="Ghana">Ghana</option><option value="Gibraltar">Gibraltar</option><option value="Greece">Greece</option><option value="Greenland">Greenland</option><option value="Grenada">Grenada</option><option value="Guadeloupe">Guadeloupe</option><option value="Guam">Guam</option><option value="Guatemala">Guatemala</option><option value="Guernsey">Guernsey</option><option value="Guinea">Guinea</option><option value="Guinea-Bissau">Guinea-Bissau</option><option value="Guyana">Guyana</option><option value="Haiti">Haiti</option><option value="Heard Island and Mcdonald Islands">Heard Island and Mcdonald Islands</option><option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option><option value="Honduras">Honduras</option><option value="Hong Kong">Hong Kong</option><option value="Hungary">Hungary</option><option value="Iceland">Iceland</option><option value="India">India</option><option value="Indonesia">Indonesia</option><option value="Iraq">Iraq</option><option value="Ireland" selected="selected">Ireland</option><option value="Isle of Man">Isle of Man</option><option value="Israel">Israel</option><option value="Italy">Italy</option><option value="Jamaica">Jamaica</option><option value="Japan">Japan</option><option value="Jersey">Jersey</option><option value="Jordan">Jordan</option><option value="Kazakhstan">Kazakhstan</option><option value="Kenya">Kenya</option><option value="Kiribati">Kiribati</option><option value="Korea, Republic of">Korea, Republic of</option><option value="Kosovo">Kosovo</option><option value="Kuwait">Kuwait</option><option value="Kyrgyzstan">Kyrgyzstan</option><option value="Lao People's Democratic Republic">Lao People's Democratic Republic</option><option value="Latvia">Latvia</option><option value="Lebanon">Lebanon</option><option value="Lesotho">Lesotho</option><option value="Liberia">Liberia</option><option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option><option value="Liechtenstein">Liechtenstein</option><option value="Lithuania">Lithuania</option><option value="Luxembourg">Luxembourg</option><option value="Macao">Macao</option><option value="Macedonia, The Former Yugoslav Republic">Macedonia, The Former Yugoslav Republic</option><option value="Madagascar">Madagascar</option><option value="Malawi">Malawi</option><option value="Malaysia">Malaysia</option><option value="Maldives">Maldives</option><option value="Mali">Mali</option><option value="Malta">Malta</option><option value="Marshall Islands">Marshall Islands</option><option value="Martinique">Martinique</option><option value="Mauritania">Mauritania</option><option value="Mauritius">Mauritius</option><option value="Mayotte">Mayotte</option><option value="Mexico">Mexico</option><option value="Micronesia, Federated States of">Micronesia, Federated States of</option><option value="Moldova, Republic of">Moldova, Republic of</option><option value="Monaco">Monaco</option><option value="Mongolia">Mongolia</option><option value="Montenegro">Montenegro</option><option value="Montserrat">Montserrat</option><option value="Morocco">Morocco</option><option value="Mozambique">Mozambique</option><option value="Myanmar">Myanmar</option><option value="Namibia">Namibia</option><option value="Nauru">Nauru</option><option value="Nepal">Nepal</option><option value="Netherlands">Netherlands</option><option value="Netherlands Antilles">Netherlands Antilles</option><option value="New Caledonia">New Caledonia</option><option value="New Zealand">New Zealand</option><option value="Nicaragua">Nicaragua</option><option value="Niger">Niger</option><option value="Nigeria">Nigeria</option><option value="Niue">Niue</option><option value="Norfolk Island">Norfolk Island</option><option value="Northern Mariana Islands">Northern Mariana Islands</option><option value="Norway">Norway</option><option value="Oman">Oman</option><option value="Pakistan">Pakistan</option><option value="Palau">Palau</option><option value="Palestine, State of">Palestine, State of</option><option value="Panama">Panama</option><option value="Papua New Guinea">Papua New Guinea</option><option value="Paraguay">Paraguay</option><option value="Peru">Peru</option><option value="Philippines">Philippines</option><option value="Pitcairn">Pitcairn</option><option value="Poland">Poland</option><option value="Portugal">Portugal</option><option value="Puerto Rico">Puerto Rico</option><option value="Qatar">Qatar</option><option value="Réunion">Réunion</option><option value="Romania">Romania</option><option value="Russian Federation">Russian Federation</option><option value="Rwanda">Rwanda</option><option value="Saint Barthélemy">Saint Barthélemy</option><option value="Saint Helena">Saint Helena</option><option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option><option value="Saint Lucia">Saint Lucia</option><option value="Saint Martin">Saint Martin</option><option value="Saint Pierre and Miquelon">Saint Pierre and Miquelon</option><option value="Saint Vincent and The Grenadines">Saint Vincent and The Grenadines</option><option value="Samoa">Samoa</option><option value="San Marino">San Marino</option><option value="Sao Tome and Principe">Sao Tome and Principe</option><option value="Saudi Arabia">Saudi Arabia</option><option value="Senegal">Senegal</option><option value="Serbia">Serbia</option><option value="Seychelles">Seychelles</option><option value="Sierra Leone">Sierra Leone</option><option value="Singapore">Singapore</option><option value="Sint Maarten (Dutch part)">Sint Maarten (Dutch part)</option><option value="Slovakia">Slovakia</option><option value="Slovenia">Slovenia</option><option value="Solomon Islands">Solomon Islands</option><option value="Somalia">Somalia</option><option value="South Africa">South Africa</option><option value="South Georgia and The South Sandwich Islands">South Georgia and The South Sandwich Islands</option><option value="South Sudan">South Sudan</option><option value="Spain">Spain</option><option value="Sri Lanka">Sri Lanka</option><option value="Suriname">Suriname</option><option value="Svalbard and Jan Mayen">Svalbard and Jan Mayen</option><option value="Swaziland">Swaziland</option><option value="Sweden">Sweden</option><option value="Switzerland">Switzerland</option><option value="Taiwan">Taiwan</option><option value="Tajikistan">Tajikistan</option><option value="Tanzania, United Republic of">Tanzania, United Republic of</option><option value="Thailand">Thailand</option><option value="Timor-leste">Timor-leste</option><option value="Togo">Togo</option><option value="Tokelau">Tokelau</option><option value="Tonga">Tonga</option><option value="Trinidad and Tobago">Trinidad and Tobago</option><option value="Tunisia">Tunisia</option><option value="Turkey">Turkey</option><option value="Turkmenistan">Turkmenistan</option><option value="Turks and Caicos Islands">Turks and Caicos Islands</option><option value="Tuvalu">Tuvalu</option><option value="Uganda">Uganda</option><option value="Ukraine">Ukraine</option><option value="United Arab Emirates">United Arab Emirates</option><option value="United Kingdom">United Kingdom</option><option value="United States">United States</option><option value="United States Minor Outlying Island">United States Minor Outlying Island</option><option value="Uruguay">Uruguay</option><option value="Uzbekistan">Uzbekistan</option><option value="Vanuatu">Vanuatu</option><option value="Venezuela, Bolivarian Republic of">Venezuela, Bolivarian Republic of</option><option value="Vietnam">Vietnam</option><option value="Virgin Islands, British">Virgin Islands, British</option><option value="Virgin Islands, U.S.">Virgin Islands, U.S.</option><option value="Wallis and Futuna">Wallis and Futuna</option><option value="Western Sahara">Western Sahara</option><option value="Yemen">Yemen</option><option value="Zambia">Zambia</option><option value="Zimbabwe">Zimbabwe</option></select>
+        </div>
+
+<!-- contact fields - do not remove -->
+
+<!-- opt-in fields required - do not remove -->
+
+        <div class="stackedField optinField hideField" style="display: none;">
+            <label class="" for="SingleOptInQuestion">I agree to receive regular email communications from Polycom about products, services and events.<span class="requiredField">*</span></label>
+            <p class="formInstructions">You can withdraw your consent at any time.</p>
+            <div class="optionsCol3">
+                <label for="SingleOptInQuestion_Y">
+                    <input name="SingleOptInQuestion" id="SingleOptInQuestion_Y" type="radio" value="Yes">Yes
+                </label>
+            </div>
+            <div class="optionsCol3">
+                <label for="SingleOptInQuestion_N">
+                    <input name="SingleOptInQuestion" id="SingleOptInQuestion_N" type="radio" value="No">No
+                </label>
+            </div>
+        </div>
+        
+        <div class="stackedField optinField hideField" style="display: none;">
+            <label for="DoubleOptInQuestion" class="">I agree to receive regular email communications from Polycom about products, services and events.<span class="requiredField">*</span></label>
+            <p class="formInstructions">You will not be subscribed until you respond to the confirmation email.</p>
+            <div class="optionsCol3">
+                <label for="DoubleOptInQuestion_Y">
+                    <input name="DoubleOptInQuestion" id="DoubleOptInQuestion_Y" type="radio" value="Yes">Yes
+                </label>
+            </div>
+            <div class="optionsCol3">
+                <label for="DoubleOptInQuestion_N">
+                    <input name="DoubleOptInQuestion" id="DoubleOptInQuestion_N" type="radio" value="No">No
+                </label>
+            </div>
+        </div>
+
+<!-- end opt-in fields -->
+
+        <div class="submitForm">
+            <button type="submit" value="Submit">Subscribe</button>
+        </div>
+    
+    <div class="blockUI" style="display:none"></div><div class="blockUI blockOverlay" style="z-index: 1000; border: medium none; margin: 0px; padding: 0px; width: 100%; height: 100%; top: 0px; left: 0px; background-color: rgb(46, 56, 68); opacity: 0.6; cursor: wait; position: absolute; display: none;"></div><div class="blockUI blockMsg blockElement" style="z-index: 1011; position: absolute; padding: 0px; margin: 0px; width: 32px; top: 128px; left: 134px; text-align: center; color: rgb(0, 0, 0); border: medium none; background-color: transparent; cursor: wait; height: 32px; display: none;"><img src="04-DR-PS-BlogSignupFrame-LP_data/circle-arrow.png" class="loading" style="transform: rotate(259.5deg);" width="32" height="32"></div></form>
+
+</div>
+
+<!-- end powerform module -->
+
+<!--[if lt IE 7]>
+<script src='http://images.info.polycom.com/i/IE7.js'></script><script type='text/javascript'>var elements = document.all;var len = elements.length;for(var i = 0; i<len; i+=1){IE7.Layout.fixRight(elements[i]);IE7.Layout.fixBottom(elements[i]);}</script>
+<![endif]-->
+
+
+
+<script type="text/javascript">
+<!--
+if (navigator.appName == 'Netscape' || navigator.appName == 'Opera'){
+     document.write('<layer hidden=true><img src="https://s1078.t.eloqua.com/visitor/v200/svrGP?pps=60&siteid=1078&PURLSiteID=2&optin=disabled&PURLSiteAlternateDNSID=0&LandingPageID=22299&PURLRecordID=0&PURLGUID=C1E7D0FC39C9471589AF81AC7E7F5939&UseRelativePath=True&elq={00000000-0000-0000-0000-000000000000}&ref=http%3A%2F%2Ftheworkspacetoday.com%2F2017%2F01%2F13%2Ffor-engineering-performance-stop-measuring-productivity%2F&elq_ck=0" border=0 width=1 height=1 alt="" ><\/layer>');
+}else{
+     document.write('<img style="display:none" src="https://s1078.t.eloqua.com/visitor/v200/svrGP?pps=60&siteid=1078&PURLSiteID=2&optin=disabled&PURLSiteAlternateDNSID=0&LandingPageID=22299&PURLRecordID=0&PURLGUID=C1E7D0FC39C9471589AF81AC7E7F5939&UseRelativePath=True&elq={00000000-0000-0000-0000-000000000000}&ref=http%3A%2F%2Ftheworkspacetoday.com%2F2017%2F01%2F13%2Ffor-engineering-performance-stop-measuring-productivity%2F&elq_ck=0" border=0 width=1 height=1 alt="">');
+}
+
+-->
+</script><layer hidden="true"><img src="04-DR-PS-BlogSignupFrame-LP_data/svrGP.gif" alt="" width="1" height="1" border="0"></layer>
+</body></html>
