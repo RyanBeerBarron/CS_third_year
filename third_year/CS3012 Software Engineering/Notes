@@ -1,0 +1,14 @@
+Software engineering report notes:
+
+Some programmers can be 10x more effective than others.
+But the idea of a really good programmer typing lightning fast on his keyboard and delivering a huge, complex, bug-free software on his first attempt is pure fiction.
+The 10x more effective programmer is more so, someone who comes up with better idea to simplify the development process. Find the right re-usable code, or just takes the simplest/easiest path to solve the problem. Also it is hard to accuratly measure how these ideas can hugely help a project. 
+
+It has been shown that good and bad programmer tend to write the same amont of lines of code each day, the difference is that the good programmer will keep more of these, whereas the bad programmer will have to come back and fix or even re-write portion of his code.
+
+Productivity is hard to measure. Can productivity be only null or positive? What about net negative productivity programmers
+Are we making the difference between effort and result ? A programmer can be very inproductive but can find an innovating idea that will drastically reduce the amount of work for everyone in the project.
+
+There is this notion of construct validity but basically, are our measuring technique really measuring what we claim they measure?
+
+Sources : John D. Cook consulting.
