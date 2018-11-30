@@ -1,0 +1,64 @@
+Software engineering report notes:
+
+To deliver a report that considers the ways in which the software engineering process can be measured and assesed in terms of measurable data, an overview of the computationial platforms available to perform this work, the algorithmic approachs available, and the ethics concerns surrounding this kind of analytics.
+
+Some programmers can be 10x more effective than others.
+But the idea of a really good programmer typing lightning fast on his keyboard and delivering a huge, complex, bug-free software on his first attempt is pure fiction.
+The 10x more effective programmer is more so, someone who comes up with better idea to simplify the development process. Find the right re-usable code, or just takes the simplest/easiest path to solve the problem. Also it is hard to accuratly measure how these ideas can hugely help a project. 
+
+It has been shown that good and bad programmer tend to write the same amont of lines of code each day, the difference is that the good programmer will keep more of these, whereas the bad programmer will have to come back and fix or even re-write portion of his code.
+
+Productivity is hard to measure. Can productivity be only null or positive? What about net negative productivity programmers
+Are we making the difference between effort and result ? A programmer can be very inproductive but can find an innovating idea that will drastically reduce the amount of work for everyone in the project.
+
+There is this notion of construct validity but basically, are our measuring technique really measuring what we claim they measure?
+
+Source : John D. Cook consulting.
+
+
+
+Software development is hard because of it essential difficulties, things that we cannot improve. But also hard for accidental difficulties. It would be nice if we could remove all of those, to make the job somewhat easier. If for example we could only hire competent and productive programmer but those are hard to come by and measure.
+
+As Brooks talk in his paper, the people are one of the most important factor in improving the "software art". The the difference between the great and the average designer can approach an order of magnitude. And so software organization need to find and nurture those great designers.
+
+Source : Brooks paper "No silver bullet"
+
+
+
+
+
+
+PSP is a methodologie created by Watts Humphrey in 1996
+Humphrey believes that improving process is a better way to assure quality than testing.
+To do a good job you need to plan
+how to measure individual developers
+how to use analytics to drive improvement
+
+
+Hackystat provide multiple services
+Provide high level analysis automatic
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
