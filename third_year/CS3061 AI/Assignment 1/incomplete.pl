@@ -24,5 +24,31 @@ initKB(File) :- retractall(kb(_)), makeKB(File).
 
 astar(Node,Path,Cost) :- kb(KB), astar(Node,Path,Cost,KB).
 
-% astar(Node,Path,Cost,KB) :- ???
+goal([[]|_]).
+
+arc([[[Head|Tail1]|History],Cost1], NewPathCost, KB) :- member([Head|Tail2], KB), append(Tail2,Tail1, NextProp), append([Head|Tail1], History, NewHistory),
+			length(Tail2, L), TempCost is L+1, Cost is TempCost + Cost1, NewPathCost = [[NextProp,NewHistory],Cost]. 
+
+add-to-frontier(Frontier, [], Frontier).
+add-to-frontier(Frontier, [PathCost|Rest], NewFrontier) :-
+	insert(PathCost, Frontier, TempFrontier),
+	add-to-frontier(TempFrontier, Rest, NewFrontier).
+
+insert(PathCost, [], [PathCost]).
+
+insert(PathCost, [PathCostH|PathCostT1], Res) :- PathCost = [_,Cost1], PathCostH = [_,Cost2],
+	(Cost1 =< Cost2, Res = [PathCost, PathCostH|PathCostT1] ;
+	Res = [PathCostH|PathCostT2], insert(PathCost, PathCostT1, PathCostT2)).
+	 
+
+astar(Node,Path,Cost,KB) :- Frontier = [[[Node],0]], astarr(Frontier, KB, End), End = [[Path,Cost]|_].
+
+astarr(Frontier, KB, End) :- Frontier = [H1|_], H1 = [Path|_], goal(Path), Frontier = End;
+	Frontier = [PathCost|PathCostRest],
+	PathCost = [Path,Cost], Path = [Current|History],
+	findall(PathCostL, arc(PathCost,PathCostL, KB), List),
+	add-to-frontier(PathCostRest, List, NewFrontier),
+	astarr(NewFrontier, KB, End).
+	
+
 	
