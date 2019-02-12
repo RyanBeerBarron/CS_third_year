@@ -1,0 +1,44 @@
+\documentclass{article}
+\title{ST3009 Weekly Questions 2}
+\author{Ryan Barron // Student number: 16329561}
+
+\usepackage{amsmath}
+\begin{document}
+\maketitle
+
+\paragraph{Question 1}
+\subparagraph{a)}   
+Each die can roll 6 different number and we roll 3 die, so the total number of outcomes is $6^3$ which is equal to 216.
+\subparagraph{b)}
+The set of outcomes with at least one 2 rolled is the same as the total set of outcomes minus the all the outcomes with no 2 in them. In terms of probability, it means that the probability of at least one 2, is 1 minus the probability of no 2 rolled: $1 - \frac{5^3}{6^3}=0.421$
+\subparagraph{c)}
+The \textsc{Matlab} simulation gives a similar result
+\subparagraph{d)}
+There are 3 possibilities for the dice rolls to sum up to 17, there is (6,6,5), (6,5,6) and (5,6,6). So the probability for that is $\frac{3}{216} = 0.013888$
+\subparagraph{e)}
+If the first roll was a 1, it means that the two other rolls need to add up to 11, and so that gives us (5,6) and (6,5) but this time, out of only $6^2$ possibilities, so the probability for that is $\frac{2}{36} = 0.0555$
+\paragraph{Question 2}
+\subparagraph{a)}
+The probability for the second roll to be a five is sum of the probability of first rolling a 1 and then a 5 using the 6 sided die, and the probability of rolling anything but a 1 and finally rolling a 5 using the 20 sided die. That is because these two cases are mutually exclusive because of the first roll. So we get:
+\begin{equation*}
+\begin{split}
+P(Second throw is 5) & = \frac{1}{6}\times\frac{1}{6}+\frac{5}{6}\times\frac{1}{20} \\ 
+P(Second throw is 5) & = 0.0694	
+\end{split}
+\end{equation*}
+\subparagraph{b)}
+Same process here but since we want the second roll to be equal to 15, only the 20 sided die can achieve such a roll, so the probability to roll 15 if the first roll is 1, is equal to 0 and we can just ignore that probabibility, so we get
+\begin{equation*}
+\begin{split}
+P(Second throw is 15) & = 0 +\frac{5}{6}\times\frac{1}{20} \\ 
+P(Second throw is 15) & = 0.0416	
+\end{split}
+\end{equation*}
+
+
+
+
+
+
+
+\end{document} 

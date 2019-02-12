@@ -1,0 +1,34 @@
+\documentclass{article}
+\title{ST3009 Weekly Questions 1}
+\date{28-01-2019}
+\author{Ryan Barron}
+
+\begin{document}
+\maketitle
+
+\paragraph{Question 1}
+\subparagraph{a)}   
+There are 10 distinct letters in the cipher, so there are 10! possible permutations, which is equal to 3628800
+\subparagraph{b)}
+There are 9 possible places for E and F to appear together in the cipher, and for each there are two possibilities whether E or F is first. On top of that, the other 8 letters can always be permutated in any manner, so that is 8! permutation, so in total : $8!*2*9 = 72760$ 
+\subparagraph{c)}
+There are 6 letters so 6! permutations, but there are two groups in which the order does not matter. There 3 As, and 2 Ns, so, we can ignore duplicate permutations where only the order of these changes. In the end, we get: $\frac{6!}{3!2!}=60$ 
+\subparagraph{d)}
+We care only about the different combinations, so the order does not matter, this is trivial: $5 \choose 3$ 
+
+\paragraph{Question 2}
+\subparagraph{a)}
+There are four die and each die has 6 possible roll, so all the possible sequences of throws is equal to $6^4 = 1296$
+\subparagraph{b)}
+Among the four rolls, two of them must roll a 3 in any combination, so that is $4 \choose 2$, for the other 2 remaining rolls, they can any roll any of 5 other result, so for them, there are $5^2$ possibilities. In total, there are $4 \choose 2 \times 5^2 = 150$ 
+\subparagraph{c)}
+Out of all the possibilities, we need all the ones with no 3s, and the rolls with exactly one 3. So that is $5^4$ possibilities of no 3, and $5^3 \times 4$ possibilities with only one 3, so that is $6^4 - 5^4 - 5^3 \times 4 = 171$
+\pagebreak
+\paragraph{Question 3}
+\subparagraph{a)}
+There are 8 cards, so 8 permutations in total, but each is in a group with its copy in the other deck. So for each group, we divide by 2!, we get $\frac{8!}{2!2!2!2!} = 2520$
+\subparagraph{b)}
+We can be dealt with 4 cards and then with 3 distinct card. On top of that, we do not care about the order so we only care about half of the outcomes, so we have: $\frac{4\times3}{2!} = 6$
+\subparagraph{c)}
+We can get Hearts/Hearts, Hearts/Diamond, Diamond/Hearts and Diamond/Diamond. Since we do not care about order, we can eliminate one of the distinct pair and we see that there are only 3 possible combination of "good cards"
+\end{document} 	
