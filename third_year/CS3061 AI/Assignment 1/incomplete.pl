@@ -41,8 +41,8 @@ goal([[]|_]).
 %In this case, the cost is just the basic arc cost of 1 for each new node.
 arc([[[HeadNode|TailNode]|PathHistory],Cost], NewPathCost, KB) :- 
 			member([HeadNode|RuleBody], KB), append(RuleBody,TailNode, NextNode),
-			length(RuleBody, L), LengthCost is L + 1
-			TotalCost is 1 + Cost, NewPathCost = [[NextNode,[HeadNode|TailNode]|PathHistory],TotalCost]. 
+			length(RuleBody, L), LengthCost is L + 1,
+			TotalCost is L + Cost, NewPathCost = [[NextNode,[HeadNode|TailNode]|PathHistory],TotalCost]. 
 
 %Arc predicate with Cost being Heuristic + arc Cost
 %arc([[[HeadNode|TailNode]|PathHistory],Cost], NewPathCost, KB) :- 

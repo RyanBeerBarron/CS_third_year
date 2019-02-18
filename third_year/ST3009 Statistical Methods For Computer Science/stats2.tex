@@ -1,8 +1,9 @@
 \documentclass{article}
 \title{ST3009 Weekly Questions 2}
 \author{Ryan Barron // Student number: 16329561}
-
+\date{}
 \usepackage{amsmath}
+\usepackage{mathtools}
 \begin{document}
 \maketitle
 
@@ -22,23 +23,48 @@ If the first roll was a 1, it means that the two other rolls need to add up to 1
 The probability for the second roll to be a five is sum of the probability of first rolling a 1 and then a 5 using the 6 sided die, and the probability of rolling anything but a 1 and finally rolling a 5 using the 20 sided die. That is because these two cases are mutually exclusive because of the first roll. So we get:
 \begin{equation*}
 \begin{split}
-P(Second throw is 5) & = \frac{1}{6}\times\frac{1}{6}+\frac{5}{6}\times\frac{1}{20} \\ 
-P(Second throw is 5) & = 0.0694	
+P(Second\: throw\: is\: 5) & = \frac{1}{6}\times\frac{1}{6}+\frac{5}{6}\times\frac{1}{20} \\ 
+P(Second\: throw\: is\: 5) & = 0.0694	
 \end{split}
 \end{equation*}
 \subparagraph{b)}
 Same process here but since we want the second roll to be equal to 15, only the 20 sided die can achieve such a roll, so the probability to roll 15 if the first roll is 1, is equal to 0 and we can just ignore that probabibility, so we get
 \begin{equation*}
 \begin{split}
-P(Second throw is 15) & = 0 +\frac{5}{6}\times\frac{1}{20} \\ 
-P(Second throw is 15) & = 0.0416	
+P(Second\: throw\: is\: 15) & = 0 +\frac{5}{6}\times\frac{1}{20} \\ 
+P(Second\: throw\: is\: 15) & = 0.0416	
 \end{split}
 \end{equation*}
-
-
-
-
-
-
-
+\paragraph{Question 3}
+\subparagraph{}
+We want to know the probability of the suspect being guilty, knowing he has the characteristic, we shall write as P(G|C). We'll use Bayes rule for that, and so we need to know the probability of P(G), that is 60\%, the probability of him having the characteristic, knowing he is guilty. Well for that we know the actual criminal has it, so if he is guilty, he has a 100\% of having the characteristic. Finally we need to calculate the probability P(C), for that we'll use marginalisation.
+So we get:
+\begin{equation*}
+\begin{split}
+P(G|C) & = \frac{P(C|G)P(G)}{P(C)}, s.t P(C) = P(C|G)P(G)+P(C|\lnot G)P(\lnot G) \\ 
+P(G|C) & = \frac{1*0.6}{1*0.6 + 0.2*0.4} = 0.88
+\end{split}
+\end{equation*}
+\paragraph{Question 4}
+\subparagraph{}
+\[
+\begin{bmatrix}
+0.0744 & 0.1885 & 0.0744 & 0.005 \\ 0.005 & 0.1488 & 0.0942 & 0.0744 \\ 0.001 & 0.005 & 0.1488 & 0.0942 \\ 0.001 & 0.001 & 0.0099 & 0.0744
+\end{bmatrix}
+\]
+I get this grid matrix for the probability of having two bar signal, knowing the location. To get this, I used Bayes rule for each of the grid cell. If L\textsubscript{i, j} corresponds to the j\textsuperscript{th} cell of the 
+i\textsuperscript{th} row for the location grid and S\textsubscript{i, j}\textbar L\textsubscript{i, j} correspond to the i, j cell on the other grid, we get the following equation:
+\begin{equation*}
+\begin{split}
+P(L\textsubscript{i, j}|S\textsubscript{i, j}) = \frac{P(S\textsubscript{i, j}|L\textsubscript{i, j})P(L\textsubscript{i, j})}
+{P(S)}, \forall i, j\;s.t\;1\leq i, j\leq 4
+\end{split}
+\end{equation*}
+Where P(S) is the probability of having signal, at all. This is calculated by using marginilisation and summing up
+all the probabilitiies of having two bar of signal in a given location, for all the location. All the probabilities from the left grid a mutually exclusive, someone can not be in two locations at the same time. So for P(S), we get:
+\begin{equation*}
+\begin{split}
+P(S) = \sum_{i, j=1}^{4} P(S\textsubscript{i, j}|L\textsubscript{i, j})\times P(L\textsubscript{i, j}) = 0.504
+\end{split}
+\end{equation*}	
 \end{document} 

@@ -1,0 +1,85 @@
+\documentclass{article}
+\title{ST3009 Weekly Questions 3}
+\author{Ryan Barron // Student number: 16329561}
+\date{}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\begin{document}
+\maketitle
+
+\paragraph{Question 1}
+\subparagraph{a)}   
+For each die roll, there is a $\frac{1}{6}$ chance for the roll to match the one in the sequence. And there are 6 rolls so the probability for this exact sequence in that order is: $(\frac{1}{6})^6 = 0.00002$
+\subparagraph{b)}
+We shall count all the possible sequences containing exactly 4 3s and divide that by $6^6$ to get the probability.
+There has to be 4 3s in the sequence, that is one possible outcome for each roll, and out of 6 die roll, that gives us $6 \choose{1} = 15$ combinations. And for the last two die roll, they can not roll 3, so that is 5 possibilities each. So in total we get: \\ \\ $\frac{{6\choose4}\times5^5}{6^6} = 0.008$  	
+\subparagraph{c)}
+Using the same process, we find that there are ${6\choose1} = 6$ combinations where a single one is rolled. And for each of those, the five other rolls each have five possibilities. So the probability to have a single one is: \\ \\ 
+$\frac{{6\choose1}\times5^5}{6^6} = 0.401$
+\subparagraph{d)}
+It is equivalent to the complement of the probability of no 1, that is 1 minus the probability of rolling no one.\\
+$1-(\frac{5}{6}^6) = 0.66$	
+\pagebreak
+\paragraph{Question 2}
+\subparagraph{}
+According to the formal definition, if two event E and F are independants, then P(E\textbar F)=P(E). The contraposition would be 
+if for two events E and F P(E\textbar F)$\neq$P(E), then E and F are not independants. \\
+Let E be the event that first die roll was a 1 and F be the event that the sum of the two die is 2. So we need to check the relation P(E\textbar F)$\neq$P(E). For the left hand side, we have the probability of the first roll is 1 knowing the sum of the two die is 2. There is only one outcome where the rolls sum up to 2, that case being (1, 1) which means, the first roll has to be a one, so it's a 100\% chance. Now for P(E), the first roll is one, there are two cases. The first case is a 6 sided die roll, in which case we have $\frac{1}{6}$, in the second case it is a 20 sided die roll, so $\frac{1}{20}$ chance, so:
+\begin{equation*}
+\begin{split}
+P(E) & = \frac{1}{6}+\frac{1}{20} \\ P(E) & = 0.216
+\end{split}
+\end{equation*}
+From this we see that P(E\textbar F)$\neq$P(E), so E and F are not independants.
+\paragraph{Question 3}
+\subparagraph{a)}
+On each unsuccesful try, there is a (n-1)/n chance for the password to not work, n being the number of passwords on that try which gets reduced after each try. On the succesful try, there is a 1/n chance for it. So we get the following formula:
+\begin{equation*}
+\begin{split}
+P(Succes\textsubscript k) & =\frac{1}{n-k+1}\times\prod_{i = 1}^{k-1}(\frac{n-i}{n+1-i}) \\
+Which\;we\;can\;simplify\;in: \\
+P(Succes\textsubscript k) & =\frac{1}{n-k+1}\times\frac{n-k+1}{n} \\
+P(Succes\textsubscript k) & =\frac{1}{n}
+\end{split}
+\end{equation*}
+\subparagraph{b)}
+Using this formula, we get the result: $\frac{1}{6} = 0.16666...$
+\subparagraph{c)}
+For each unsuccesful try, the probability is the same, and it is $\frac{n-1}{n}$ because there is only one correct password, and there are k-1 unsuccesful tries, so the fraction is raised to that power. For the last and succesful try, the probability will be: $\frac{1}{n}$. Again there is only one correct password so the full probability equation is:\\ \\
+$P(Succes\textsubscript k) =(\frac{n-1}{n})^{k-1} \times\frac{1}{n}$
+\subparagraph{d)}
+Using our formula, we get: $P(Succes\textsubscript k) = 0.115740$
+\pagebreak
+\paragraph{Question 4}
+\subparagraph{a)}
+The complement to the probability of a robot being flagged would be the probability of it not being flagged i.e the robot succeeds every test. So to find the probability we are interested in, we just subtract the complement probability to 1.
+Now the probability of the robot passing all the test is just 0.3 raised to the power of the number of tests so: \\
+\begin{flalign*}
+P(Flagged\textsubscript{robot}) = 1 - P(Non-Flagged\textsubscript{robot}), \;where: && 
+\end{flalign*}
+\qquad \qquad$P(Non-Flagged\textsubscript{robot}) = 0.3^3 = 0.027$ 
+\begin{flalign*}
+P(Flagged\textsubscript{robot}) = 0.973 &&
+\end{flalign*}
+\subparagraph{b)}
+Using the same process, we get:\\
+\begin{flalign*}
+P(Flagged\textsubscript{human}) = 1 - P(Non-Flagged\textsubscript{human}), \;where: && 
+\end{flalign*}
+\qquad \qquad$P(Non-Flagged\textsubscript{human}) = 0.95^3 = 0.857375$ 
+\begin{flalign*}
+P(Flagged\textsubscript{human}) = 0.142625 &&
+\end{flalign*}
+\subparagraph{c)}
+We want the probability of the visitor being a robot, knowing he was flagged, let's write that probability as P(R\textbar F). Now we can write the following: \\ \\ $P(R|F) = \frac{P(F|R)P(R)}{P(F)}$ \\ \\Where P(F\textbar R)
+is the answer we've found part a), P(R) is the probability of the visitor being a robot which is $\frac{1}{10}$, finally using marginalisation we can find P(F), we have:
+\begin{equation*}
+\begin{split}
+P(F) & = P(R)P(F|R) + P(H)P(F|H) \\
+P(F) & = \frac{1}{10}\times 0.973 + \frac{9}{10}\times 0.142625 \\
+P(F) & = 0.2256625 \\
+P(R|F) & = \frac{\frac{1}{10}\times 0.973}{0.2256625} = 0.43117
+\end{split}
+\end{equation*}
+
+\end{document}	
