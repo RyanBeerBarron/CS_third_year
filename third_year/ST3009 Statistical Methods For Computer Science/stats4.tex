@@ -1,5 +1,5 @@
 \documentclass{article}
-\title{ST3009 Weekly Questions 3}
+\title{ST3009 Weekly Questions 4}
 \author{Ryan Barron // Student number: 16329561}
 \date{}
 \usepackage{amsmath}
@@ -41,7 +41,20 @@ P(No\;1s\;rolled) & = \frac{5^4}{6^4} = 0.4822
 \end{equation*}
 \subparagraph{c)}
 We need to calculate the probability P(X$\leq$k), $\forall$ k where $1\leq k\leq 6$
-
-
-
+For each of those, it is easier to calculate the probability's complement, and subtract that from 1.
+Indeed, the complement of P(X$\leq$3), for example, is the probability of P(X$>$3) which is equivalent to the probability of rolling only 4s or higher. So, we get: \\
+\begin{equation*}
+\begin{split}
+P(X\leq1) & = 1 - P(X>1)  = 1 - \frac{5^4}{6^4}  = 0.51774691358 \\
+P(X\leq2) & = 1 - P(X>2)  = 1 - \frac{4^4}{6^4}  = 0.8024691358 \\
+P(X\leq3) & = 1 - P(X>3)  = 1 - \frac{3^4}{6^4} = 0.9375 \\
+P(X\leq4) & = 1 - P(X>4)  = 1 - \frac{2^4}{6^4}  = 0.98765432098 \\
+P(X\leq5) & = 1 - P(X>5)  = 1 - \frac{1^4}{6^4} = 0.99922839506 \\
+P(X\leq6) & = 1 - P(X>6)  = 1 - \frac{0}{6^4}  = 1 
+\end{split}
+\end{equation*}
+And so, we that, we get: \\
+$
+CDF(X) = \begin{cases} 0.5177, for X\leq 1 \\ 0.802, for X\leq 2 \\ 0.9375, for X\leq 3\\ 0.987, for X\leq 4\\ 0.999, for X\leq 5\\ 1, for X\leq 6\end{cases}
+$
 \end{document}
