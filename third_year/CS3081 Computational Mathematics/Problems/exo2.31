@@ -1,0 +1,14 @@
+
+
+
+
+
+
+function det = Determinant(matrix)
+    s = size(matrix)
+    if s(1) != s(2)
+        det = "The matrix must be square"
+    else
+        for i = 
+    end    
+end 
