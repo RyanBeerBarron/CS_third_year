@@ -1,4 +1,3 @@
-
 %Set up variables for number of iterations, the first interval
 %and the anonymous function f and gfoo, the latter being the derivative of 
 %the former. Using matlabFunction to convert the symbolic function g, to a
