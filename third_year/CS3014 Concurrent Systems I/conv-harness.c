@@ -265,7 +265,7 @@ void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
                int kernel_order)
 {
  int h, w, x, y, c, m;
-
+ 
   for ( m = 0; m < nkernels; m++ ) {
     for ( w = 0; w < width; w++ ) {
       for ( h = 0; h < height; h++ ) {
@@ -276,11 +276,11 @@ void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
               sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
             }
           }
-        }
         output[m][w][h] = (float) sum;
+        }
       }
     }
-  }
+  } 
 }
 
 int main(int argc, char ** argv)
