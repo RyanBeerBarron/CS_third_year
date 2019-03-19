@@ -21,7 +21,7 @@ num = Sxx*Sy - Sxy*Sx;
 denum = n(2)*Sxx - Sx^2;
 b = num / denum;
 
-disp("b is equal to " + exp(b));
+disp("b is equal to " +b);
 
 disp("m is equal to " + m);
 temp = exp(b) * exp(1985*m);
