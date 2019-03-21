@@ -72,3 +72,9 @@ function approx = newton(a, iter, foo, deriv)
         return
     end    
 end
+
+
+function Xs = newtonExam(p)
+	foo = @(x) x^2 - p;
+	derivfoo = matlabFunction(diff(foo(x)));
+	

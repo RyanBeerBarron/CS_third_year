@@ -4,12 +4,24 @@
 # and write correct iterations and average time.
 # Change syntax for time 
 
-OUTPUT="timing.txt"
-FUNCTION=`cat conv-harness.c | pcregrep -M 'void\ team_conv(.|\n)*(^}\n\n)'`
-INPUTS=$@
-TIME=`./conv-harness $INPUTS | grep Team`
 
-echo "The function was:\n$FUNCTION\n" >> $OUTPUT
-echo "Inputs were: $INPUTS\n" >> $OUTPUT
-echo "Iterations: 1\n" >> $OUTPUT
-echo "Time was: $TIME\n\n" >> $OUTPUT
+INPUTS=$@
+echo "Enter the number of iterations:"
+read ITER
+
+OUTPUT="timing.txt"
+FUNCTION=`cat conv-harness.c`
+I=1
+TOTAL_TIME=0
+while [ $I -le $ITER ]
+do
+	TIME=`./conv-harness $INPUTS | tr ' ' '\n' | grep -E '^[0-9]+'`
+	TOTAL_TIME=`expr $TOTAL_TIME + $TIME`
+	I=`expr $I + 1`
+done	
+
+TIME=`expr $TOTAL_TIME / $ITER`
+echo "The function was:\n${FUNCTION}\n\n" >> $OUTPUT
+echo "Inputs were: ${INPUTS}\n\n" >> $OUTPUT
+echo "Iterations: ${ITER}\n\n" >> $OUTPUT
+echo "The average time was: ${TIME} microseconds\n\n\n" >> $OUTPUT

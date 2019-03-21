@@ -43,7 +43,6 @@
 /* to stop the printing of debugging information, use the following line: */
 #define DEBUGGING(_x)
 
-
 /* write 3d matrix to stdout */
 void write_out(int16_t *** a, int dim0, int dim1, int dim2)
 {
@@ -60,7 +59,6 @@ void write_out(int16_t *** a, int dim0, int dim1, int dim2)
     }
   }
 }
-
 
 /* create new empty 4d float matrix */
 float **** new_empty_4d_matrix_float(int dim0, int dim1, int dim2, int dim3)
@@ -265,11 +263,10 @@ void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
                int kernel_order)
 {
  int h, w, x, y, c, m;
- 
   for ( m = 0; m < nkernels; m++ ) {
     for ( w = 0; w < width; w++ ) {
       for ( h = 0; h < height; h++ ) {
-        double sum = 0.0;
+       register double sum = 0.0;
         for ( c = 0; c < nchannels; c++ ) {
           for ( x = 0; x < kernel_order; x++) {
             for ( y = 0; y < kernel_order; y++ ) {
@@ -280,7 +277,7 @@ void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
         }
       }
     }
-  } 
+  }
 }
 
 int main(int argc, char ** argv)

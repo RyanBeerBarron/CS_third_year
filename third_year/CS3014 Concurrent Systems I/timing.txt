@@ -1,14 +1,12 @@
-The function was:
 void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
 {
  int h, w, x, y, c, m;
- 
   for ( m = 0; m < nkernels; m++ ) {
     for ( w = 0; w < width; w++ ) {
       for ( h = 0; h < height; h++ ) {
-        double sum = 0.0;
+       register double sum = 0.0;
         for ( c = 0; c < nchannels; c++ ) {
           for ( x = 0; x < kernel_order; x++) {
             for ( y = 0; y < kernel_order; y++ ) {
@@ -16,30 +14,27 @@ void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
             }
           }
         output[m][w][h] = (float) sum;
-        }
-      }
-    }
-  } 
-}
-
-Inputs were: 128 128 5 3 3
-
-Iterations: 7
-
-Time was: Team conv time: 18879 microseconds
 
 
-The function was:
+Inputs were: 16 16 1 32 32
+
+
+Iterations: 650
+
+
+The average time was: 2667 microseconds
+
+
+
 void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
 {
  int h, w, x, y, c, m;
- 
   for ( m = 0; m < nkernels; m++ ) {
     for ( w = 0; w < width; w++ ) {
       for ( h = 0; h < height; h++ ) {
-        double sum = 0.0;
+       register double sum = 0.0;
         for ( c = 0; c < nchannels; c++ ) {
           for ( x = 0; x < kernel_order; x++) {
             for ( y = 0; y < kernel_order; y++ ) {
@@ -47,16 +42,99 @@ void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
             }
           }
         output[m][w][h] = (float) sum;
-        }
-      }
-    }
-  } 
-}
 
-Inputs were: 512 512 1 32 32
 
-Iterations: 2
+Inputs were: 16 16 3 32 32
 
-Time was: Team conv time: 2356059 microseconds
+
+Iterations: 50
+
+
+The average time was: 11913 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       register double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 32 32 3 32 32
+
+
+Iterations: 10
+
+
+The average time was: 46243 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       register double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 32 32 5 32 32
+
+
+Iterations: 5
+
+
+The average time was: 128206 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       register double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 32 32
+
+
+Iterations: 30
+
+
+The average time was: 193130 microseconds
+
 
 
