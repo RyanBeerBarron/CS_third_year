@@ -258,11 +258,11 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
 }
 
 /* the fast version of matmul written by the team */
-void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+void team_conv(restrict int16_t *** image, restrict int16_t **** kernels, restrict float *** output,
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
 {
- int h, w, x, y, c, m;
+ register int h, w, x, y, c, m;
   for ( m = 0; m < nkernels; m++ ) {
     for ( w = 0; w < width; w++ ) {
       for ( h = 0; h < height; h++ ) {
