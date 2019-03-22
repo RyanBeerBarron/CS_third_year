@@ -1,3 +1,34 @@
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 128 128 3 256 256
+
+
+Iterations: 1
+
+
+The average time was: 1980709 microseconds
+
+
+
 void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
@@ -23,6 +54,397 @@ Iterations: 1
 
 
 The average time was: 41751675 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 128 128 3 64 32
+
+
+Iterations: 10
+
+
+The average time was: 185624 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 128 128 3 64 32
+
+
+Iterations: 10
+
+
+The average time was: 150497 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 128 128 3 64 32
+
+
+Iterations: 10
+
+
+The average time was: 869024 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 1024
+
+
+Iterations: 100
+
+
+The average time was: 37078 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 1024
+
+
+Iterations: 100
+
+
+The average time was: 39873 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 1024
+
+
+Iterations: 100
+
+
+The average time was: 96469 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 128
+
+
+Iterations: 100
+
+
+The average time was: 15618 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 128
+
+
+Iterations: 100
+
+
+The average time was: 9624 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 256
+
+
+Iterations: 100
+
+
+The average time was: 22376 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 256
+
+
+Iterations: 100
+
+
+The average time was: 22009 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 256
+
+
+Iterations: 100
+
+
+The average time was: 24230 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 32
+
+
+Iterations: 2001
+
+
+The average time was: 13098 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 32
+
+
+Iterations: 1000
+
+
+The average time was: 12976 microseconds
 
 
 
@@ -80,6 +502,456 @@ Iterations: 2000
 
 The average time was: 2413 microseconds
 
+
+
+void team_conv(int16_t *** restrict image,  int16_t **** restrict kernels, float *** restrict output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  register int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       register double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 32
+
+
+Iterations: 1000
+
+
+The average time was: 2699 microseconds
+
+
+
+void team_conv(int16_t *** restrict image,  int16_t **** restrict kernels, float *** restrict output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  register int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       register double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 32
+
+
+Iterations: 1000
+
+
+The average time was: 12960 microseconds
+
+
+
+void team_conv(int16_t *** restrict image,  int16_t **** restrict kernels, float *** restrict output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ register int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       register double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 32
+
+
+Iterations: 1000
+
+
+The average time was: 2444 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 64
+
+
+Iterations: 100
+
+
+The average time was: 17639 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 1 32 64
+
+
+Iterations: 100
+
+
+The average time was: 6143 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, m;
+  register int x, y, c;
+
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        register double sum = 0.0;
+        #pragma omp parallel for collapse(3) reduction(+:sum)
+          for ( c = 0; c < nchannels; c++ ) {
+            for ( x = 0; x < kernel_order; x++) {
+              for ( y = 0; y < kernel_order; y++ ) {
+                sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+              }
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 16 16 7 128 64
+
+
+Iterations: 5
+
+
+The average time was: 1368757 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for  
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 256 256 1 32 32
+
+
+Iterations: 110
+
+
+The average time was: 107755 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)  
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 256 256 1 32 32
+
+
+Iterations: 110
+
+
+The average time was: 94706 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for private(c, x, y) collapse(3)  
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 256 256 1 32 32
+
+
+Iterations: 100
+
+
+The average time was: 94032 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for  
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 64 256
+
+
+Iterations: 10
+
+
+The average time was: 219143 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 64 256
+
+
+Iterations: 10
+
+
+The average time was: 227125 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 64 256
+
+
+Iterations: 10
+
+
+The average time was: 1737961 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for    
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 64 64
+
+
+Iterations: 20
+
+
+The average time was: 108545 microseconds
+
+
+
+void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+  int h, w, x, y, c, m;
+#pragma omp parallel
+{
+#pragma omp for collapse(3)   
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+        double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 64 64
+
+
+Iterations: 10
+
+
+The average time was: 89552 microseconds
+
+
+
+void team_conv(int16_t *** image, int16_t **** kernels, float *** output,
+               int width, int height, int nchannels, int nkernels,
+               int kernel_order)
+{
+ int h, w, x, y, c, m;
+  for ( m = 0; m < nkernels; m++ ) {
+    for ( w = 0; w < width; w++ ) {
+      for ( h = 0; h < height; h++ ) {
+       double sum = 0.0;
+        for ( c = 0; c < nchannels; c++ ) {
+          for ( x = 0; x < kernel_order; x++) {
+            for ( y = 0; y < kernel_order; y++ ) {
+              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+            }
+          }
+        output[m][w][h] = (float) sum;
+
+
+Inputs were: 64 64 3 64 64
+
+
+Iterations: 10
+
+
+The average time was: 434066 microseconds
 
 
 
