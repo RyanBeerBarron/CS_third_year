@@ -257,32 +257,61 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
   }
 }
 
+int16_t *** change_dimension_order(int16_t *** image, int nchannels, int width, int height) {
+
+  int16_t *** new_image = malloc(nchannels * sizeof(int16_t **));
+  #pragma omp parallel for
+  for(int i = 0; i<width; i++) {
+    new_image[i] = malloc(width * sizeof(int16_t *));
+    #pragma omp parallel for
+    for(int j = 0; j<height; j++) {
+      new_image[i][j] = malloc(height * sizeof(int16_t));
+    }
+  }
+  #pragma omp parallel for collapse(3)
+  for(int i = 0; i<nchannels; i++) {
+    for(int j = 0; j<width; j++) {
+      for(int k = 0; k<height; k++) {
+        new_image[i][j][k] = image[j][k][i];
+      }
+    }
+  }
+  return new_image;
+}
+
 /* the fast version of matmul written by the team */
 void team_conv(int16_t *** image,  int16_t **** kernels, float *** output,
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
 {
+  image = change_dimension_order(image, nchannels, width, height);
   int h, w, x, y, c, m;
 #pragma omp parallel
 {
-#pragma omp for collapse(3)   
-  for ( m = 0; m < nkernels; m++ ) {
-    for ( w = 0; w < width; w++ ) {
-      for ( h = 0; h < height; h++ ) {
-        double sum = 0.0;
-        for ( c = 0; c < nchannels; c++ ) {
-          for ( x = 0; x < kernel_order; x++) {
-            for ( y = 0; y < kernel_order; y++ ) {
-              sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+  #pragma omp for collapse(3)   
+    for ( m = 0; m < nkernels; m++ ) {
+      for ( w = 0; w < width; w++ ) {
+        for ( h = 0; h < height; h++ ) {
+          double sum = 0.0;
+          #pragma omp parallel
+          {
+            #pragma omp for collapse(3) reduction(+:sum)
+            for ( c = 0; c < nchannels; c++ ) {
+              for ( x = 0; x < kernel_order; x++) {
+                for ( y = 0; y < kernel_order; y++ ) {
+                  //sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+                  sum += (double) image[c][w+x][h+y] * (double) kernels[m][c][x][y];
+                }
+              }
             }
           }
-        output[m][w][h] = (float) sum;
+          output[m][w][h] = (float) sum;
         }
       }
     }
   }
 }
-}
+
 int main(int argc, char ** argv)
 {
   //float image[W][H][C];
