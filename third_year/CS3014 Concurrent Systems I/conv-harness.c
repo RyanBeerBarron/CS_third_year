@@ -257,13 +257,13 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
   }
 }
 
-int16_t *** change_dimension_order(int16_t *** image, int nchannels, int width, int height, int kernel_order) {
+int16_t *** change_image_dimension_order(int16_t *** image, int nchannels, int width, int height, int kernel_order) {
 
   //int16_t *** new_image = new_empty_3d_matrix_int16(nchannels, width+kernel_order, height+kernel_order);
   int16_t *** new_image = malloc(nchannels * sizeof(int16_t **));
   int temp1 = width + kernel_order; 
   int temp2 = height + kernel_order;
-  #pragma omp parallel for
+ #pragma omp parallel for
   for(size_t i = 0; i<nchannels; i++) {
     new_image[i] = malloc(temp1 * sizeof(int16_t *));
     #pragma omp parallel for
@@ -272,10 +272,10 @@ int16_t *** change_dimension_order(int16_t *** image, int nchannels, int width, 
     }
   }
   
-  #pragma omp parallel for collapse(3)
+ #pragma omp parallel for collapse(3)
   for(int i = 0; i<nchannels; i++) {
-    for(int j = 0; j<width; j++) {
-      for(int k = 0; k<height; k++) {
+    for(int j = 0; j<temp1; j++) {
+      for(int k = 0; k<temp2; k++) {
         new_image[i][j][k] = image[j][k][i];
       }
     }
@@ -283,27 +283,81 @@ int16_t *** change_dimension_order(int16_t *** image, int nchannels, int width, 
   return new_image;
 }
 
+int16_t **** change_kernel_dimension_order(int16_t **** kernel, int nkernels, int nchannels, int kernel_order) {
+  
+
+  int16_t **** new_kernel = malloc(nkernels * sizeof(int16_t***));
+  int16_t *** mat1 = malloc(nkernels * kernel_order * sizeof(int16_t**));
+  int16_t ** mat2 = malloc(nkernels * kernel_order * kernel_order * sizeof(int16_t*));
+  int16_t * mat3 = malloc(nkernels * kernel_order * kernel_order * nchannels * sizeof(int16_t));
+  size_t i, j, k;
+
+#pragma omp parallel for
+  for ( i = 0; i < nkernels; i++ ) {
+    new_kernel[i] = &(mat1[i*kernel_order]);
+  //#pragma omp parallel for
+    for ( j = 0; j < kernel_order; j++ ) {
+      new_kernel[i][j] = &(mat2[i*kernel_order*kernel_order + j*kernel_order]);
+      //#pragma omp parallel for
+      for ( k = 0; k < kernel_order; k++ ) {
+        new_kernel[i][j][k] = &(mat3[i*kernel_order*kernel_order*nchannels+j*kernel_order*nchannels+k*nchannels]);
+      }
+    }
+  }
+  #pragma omp parallel for
+  for(size_t i = 0; i<nkernels; i++) {
+    for(size_t j = 0; j<kernel_order; j++) {
+      for(size_t k = 0; k<kernel_order; k++) {
+        #pragma omp parallel for
+        for(size_t l = 0; l<nchannels; l++) {
+            new_kernel[i][j][k][l] = kernel[i][l][j][k];
+          }
+        }
+      }
+    }     
+                 
+  return new_kernel;  
+}
+
 /* the fast version of matmul written by the team */
 inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict kernels, float *** restrict output,
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
 {
-  //image = change_dimension_order(image, nchannels, width, height, kernel_order);
+  //image = change_image_dimension_order(image, nchannels, width, height, kernel_order);
+  kernels = change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
   int h, w, x, y, c, m;
-#pragma omp parallel for collapse(3)
+#pragma omp parallel for schedule(static) collapse(3)
     for ( m = 0; m < nkernels; m++ ) {
       for ( w = 0; w < width; w++ ) {
         for ( h = 0; h < height; h++ ) {
           register double sum = 0.0;
-          #pragma omp parallel for collapse(3) private(x, y) reduction(+:sum)
-            for ( c = 0; c < nchannels; c++ ) {
-              for ( x = 0; x < kernel_order; x++) {
-                for ( y = 0; y < kernel_order; y++ ) {
-                  sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+          
+          #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)
+            for ( x = 0; x < kernel_order; x++) {
+              for ( y = 0; y < kernel_order; y++ ) {
+                for ( c = 0; c < nchannels; c+=8 ) {
+                  __m128i const a = _mm_load_si128(&image[w+x][h+y][c]);
+                  __m128i const b = _mm_load_si128(&kernels[m][x][y][c]);
+                  __m128i const e = _mm_madd_epi16(a, b);
+                  __m128i d = _mm_hadd_epi32(e, e);
+                  d =  _mm_hadd_epi32(d, d);
+                  sum += (double) _mm_extract_epi32(d, 0);
                 }
               }
-            }
-        
+            }  
+      
+        /*          
+          #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)        
+            for( c = 0; c < nchannels; c++) {
+              for( x = 0; x < kernel_order; x++) {
+                for( y = 0; y < kernel_order; y++) {
+                  //sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
+                  sum += (double) image[c][w+x][h+y] * (double) kernels[m][c][x][y];
+                }
+              }
+            }      
+          */
           output[m][w][h] = (float) sum;
         }
       }
@@ -357,7 +411,8 @@ int main(int argc, char ** argv)
   /* use a simple multichannel convolution routine to produce control result */
   /*multichannel_conv(image, kernels, control_output, width,
                     height, nchannels, nkernels, kernel_order);
-  */
+  
+  //image = change_dimension_order(image, nchannels, width, height, kernel_order);
   
   /* record starting time of team's code*/
   gettimeofday(&start_time, NULL);

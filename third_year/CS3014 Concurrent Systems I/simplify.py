@@ -64,7 +64,7 @@ for timing in fileList:
 
 f.close()
 
-newFileList = sorted(newFileList, key=lambda tup: (tup[1],tup[0],tup[2]))
+newFileList = sorted(newFileList, key=lambda tup: (tup[1],tup[3]))
 f = open("timing.txt", "w")
 """ if sys.version_info[0] == 0 and sys.version_info[1] >= 6:
 	for element in newFileList:
