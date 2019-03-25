@@ -283,7 +283,7 @@ int16_t *** change_image_dimension_order(int16_t *** image, int nchannels, int w
   return new_image;
 }
 
-int16_t **** change_kernel_dimension_order(int16_t **** kernel, int nkernels, int nchannels, int kernel_order) {
+int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel, int nkernels, int nchannels, int kernel_order) {
   
 
   int16_t **** new_kernel = malloc(nkernels * sizeof(int16_t***));
@@ -292,7 +292,7 @@ int16_t **** change_kernel_dimension_order(int16_t **** kernel, int nkernels, in
   int16_t * mat3 = malloc(nkernels * kernel_order * kernel_order * nchannels * sizeof(int16_t));
   size_t i, j, k;
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(guided)
   for ( i = 0; i < nkernels; i++ ) {
     new_kernel[i] = &(mat1[i*kernel_order]);
   //#pragma omp parallel for
@@ -304,18 +304,31 @@ int16_t **** change_kernel_dimension_order(int16_t **** kernel, int nkernels, in
       }
     }
   }
-  #pragma omp parallel for
+  #pragma omp parallel for schedule(guided)
   for(size_t i = 0; i<nkernels; i++) {
     for(size_t j = 0; j<kernel_order; j++) {
       for(size_t k = 0; k<kernel_order; k++) {
-        #pragma omp parallel for
-        for(size_t l = 0; l<nchannels; l++) {
-            new_kernel[i][j][k][l] = kernel[i][l][j][k];
-          }
+        
+        /*
+        //#pragma omp parallel for schedule(guided)
+        for(size_t l = 0; l<nchannels; l+=8) {
+          __m128i a = _mm_set_epi16(kernel[i][l][j][k], kernel[i][l+1][j][k],
+                                    kernel[i][l+2][j][k], kernel[i][l+3][j][k],
+                                    kernel[i][l+4][j][k], kernel[i][l+5][j][k],
+                                    kernel[i][l+6][j][k], kernel[i][l+7][j][k]);
+          
+          _mm_store_si128(&new_kernel[i][j][k][l], a);
         }
+        */
+        #pragma omp parallel for schedule(guided)
+        for(size_t l = 0; l<nchannels; l++) {
+          new_kernel[i][j][k][l] = kernel[i][l][j][k];
+        }
+
+
       }
-    }     
-                 
+    }
+  }                    
   return new_kernel;  
 }
 
@@ -409,10 +422,9 @@ int main(int argc, char ** argv)
   //DEBUGGING(write_out(A, a_dim1, a_dim2));
 
   /* use a simple multichannel convolution routine to produce control result */
-  /*multichannel_conv(image, kernels, control_output, width,
+  multichannel_conv(image, kernels, control_output, width,
                     height, nchannels, nkernels, kernel_order);
   
-  //image = change_dimension_order(image, nchannels, width, height, kernel_order);
   
   /* record starting time of team's code*/
   gettimeofday(&start_time, NULL);
@@ -431,7 +443,7 @@ int main(int argc, char ** argv)
 
   /* now check that the team's multichannel convolution routine
      gives the same answer as the known working version */
-  //check_result(output, control_output, nkernels, width, height);
+  check_result(output, control_output, nkernels, width, height);
 
   return 0;
 }
