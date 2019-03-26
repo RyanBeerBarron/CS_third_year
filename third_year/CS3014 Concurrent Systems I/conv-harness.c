@@ -43,6 +43,9 @@
 /* to stop the printing of debugging information, use the following line: */
 #define DEBUGGING(_x)
 
+
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 /* write 3d matrix to stdout */
 void write_out(int16_t *** a, int dim0, int dim1, int dim2)
 {
@@ -257,32 +260,6 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
   }
 }
 
-int16_t *** change_image_dimension_order(int16_t *** image, int nchannels, int width, int height, int kernel_order) {
-
-  //int16_t *** new_image = new_empty_3d_matrix_int16(nchannels, width+kernel_order, height+kernel_order);
-  int16_t *** new_image = malloc(nchannels * sizeof(int16_t **));
-  int temp1 = width + kernel_order; 
-  int temp2 = height + kernel_order;
- #pragma omp parallel for
-  for(size_t i = 0; i<nchannels; i++) {
-    new_image[i] = malloc(temp1 * sizeof(int16_t *));
-    #pragma omp parallel for
-    for(size_t j = 0; j<temp1; j++) {
-      new_image[i][j] = malloc(temp2 * sizeof(int16_t));
-    }
-  }
-  
- #pragma omp parallel for collapse(3)
-  for(int i = 0; i<nchannels; i++) {
-    for(int j = 0; j<temp1; j++) {
-      for(int k = 0; k<temp2; k++) {
-        new_image[i][j][k] = image[j][k][i];
-      }
-    }
-  }
-  return new_image;
-}
-
 int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel, int nkernels, int nchannels, int kernel_order) {
   
 
@@ -304,30 +281,44 @@ int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel
       }
     }
   }
+  size_t blocksize = 32;
   #pragma omp parallel for schedule(guided)
-  for(size_t i = 0; i<nkernels; i++) {
-    for(size_t j = 0; j<kernel_order; j++) {
-      for(size_t k = 0; k<kernel_order; k++) {
-        
-        /*
-        //#pragma omp parallel for schedule(guided)
-        for(size_t l = 0; l<nchannels; l+=8) {
-          __m128i a = _mm_set_epi16(kernel[i][l][j][k], kernel[i][l+1][j][k],
-                                    kernel[i][l+2][j][k], kernel[i][l+3][j][k],
-                                    kernel[i][l+4][j][k], kernel[i][l+5][j][k],
-                                    kernel[i][l+6][j][k], kernel[i][l+7][j][k]);
+  for(register size_t i = 0; i<nkernels; i++) {
+    
+    // for(register size_t l1 = 0 ; l1<nchannels; l1+=blocksize) {
+    //   for(register size_t j = 0; j<kernel_order; j++) {
+    //     for(register size_t k = 0; k<kernel_order; k++) {
           
-          _mm_store_si128(&new_kernel[i][j][k][l], a);
-        }
-        */
+          
+    //       // //#pragma omp parallel for schedule(guided)
+    //       // for(size_t l = 0; l<nchannels; l+=8) {
+    //       //   __m128i a = _mm_set_epi16(kernel[i][l][j][k], kernel[i][l+1][j][k],
+    //       //                             kernel[i][l+2][j][k], kernel[i][l+3][j][k],
+    //       //                             kernel[i][l+4][j][k], kernel[i][l+5][j][k],
+    //       //                             kernel[i][l+6][j][k], kernel[i][l+7][j][k]);
+            
+    //       //   _mm_store_si128(&new_kernel[i][j][k][l], a);
+    //       // }
+          
+    //       #pragma omp parallel for schedule(guided)
+    //       for(register size_t l2 = 0; l2 <MIN(nchannels-l1, blocksize) ; l2++) {
+    //         new_kernel[i][k][j][l1+l2] = kernel[i][l1+l2][j][k];
+    //       }
+    //     }
+    //   }
+    // }  
+
+
+    for(register size_t j = 0; j<kernel_order; j++) {
+      for(register size_t k = 0; k<kernel_order; k++) {
+
         #pragma omp parallel for schedule(guided)
-        for(size_t l = 0; l<nchannels; l++) {
+        for(register size_t l = 0; l<nchannels; l++) {
           new_kernel[i][j][k][l] = kernel[i][l][j][k];
         }
-
-
       }
     }
+
   }                    
   return new_kernel;  
 }
@@ -337,26 +328,64 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
                int width, int height, int nchannels, int nkernels,
                int kernel_order)
 {
-  //image = change_image_dimension_order(image, nchannels, width, height, kernel_order);
   kernels = change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
   int h, w, x, y, c, m;
 #pragma omp parallel for schedule(static) collapse(3)
     for ( m = 0; m < nkernels; m++ ) {
       for ( w = 0; w < width; w++ ) {
         for ( h = 0; h < height; h++ ) {
-          register double sum = 0.0;
+          register int sum = 0.0;
           
           #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)
             for ( x = 0; x < kernel_order; x++) {
               for ( y = 0; y < kernel_order; y++ ) {
-                for ( c = 0; c < nchannels; c+=8 ) {
-                  __m128i const a = _mm_load_si128(&image[w+x][h+y][c]);
-                  __m128i const b = _mm_load_si128(&kernels[m][x][y][c]);
-                  __m128i const e = _mm_madd_epi16(a, b);
-                  __m128i d = _mm_hadd_epi32(e, e);
-                  d =  _mm_hadd_epi32(d, d);
-                  sum += (double) _mm_extract_epi32(d, 0);
+              
+                for ( c = 0; c < nchannels; c+=32 ) {
+                  
+                  size_t temp1 = c;
+                  size_t temp2 = c+8;
+                  size_t temp3 = c+16;
+                  size_t temp4 = c+24;
+                  __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
+                  __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
+                  __m128i c1 = _mm_madd_epi16(a1, b1);
+                  __m128i d1 = _mm_hadd_epi32(c1, c1);
+                  d1 =  _mm_hadd_epi32(d1, d1);
+                  sum +=  _mm_extract_epi32(d1, 0);
+
+                  __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
+                  __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
+                  __m128i c2 = _mm_madd_epi16(a2 , b2);
+                  __m128i d2 = _mm_hadd_epi32(c2, c2);
+                  d2 =  _mm_hadd_epi32(d2, d2);
+                  sum +=  _mm_extract_epi32(d2, 0);
+                  
+                  __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
+                  __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
+                  __m128i c3 = _mm_madd_epi16(a3, b3);
+                  __m128i d3 = _mm_hadd_epi32(c3, c3);
+                  d3 =  _mm_hadd_epi32(d3, d3);
+                  sum +=  _mm_extract_epi32(d3, 0);
+                  
+                  __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
+                  __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
+                  __m128i c4 = _mm_madd_epi16(a4, b4);
+                  __m128i d4 = _mm_hadd_epi32(c4, c4);
+                  d4 =  _mm_hadd_epi32(d4, d4);
+                  sum +=  _mm_extract_epi32(d4, 0);
+                  
                 }
+
+                // for( c = 0; c < nchannels; c+= 8) {
+                //   __m128i a1 = _mm_load_si128(&image[w+x][h+y][c]);
+                //   __m128i b1 = _mm_load_si128(&kernels[m][x][y][ c]);
+                //   __m128i c1 = _mm_madd_epi16(a1, b1);
+                //   __m128i d1 = _mm_hadd_epi32(c1, c1);
+                //   d1 =  _mm_hadd_epi32(d1, d1);
+                //   sum +=  _mm_extract_epi32(d1, 0);
+                // }
+              
+              
               }
             }  
       
@@ -371,6 +400,7 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
               }
             }      
           */
+
           output[m][w][h] = (float) sum;
         }
       }
@@ -422,7 +452,7 @@ int main(int argc, char ** argv)
   //DEBUGGING(write_out(A, a_dim1, a_dim2));
 
   /* use a simple multichannel convolution routine to produce control result */
-  multichannel_conv(image, kernels, control_output, width,
+  /*multichannel_conv(image, kernels, control_output, width,
                     height, nchannels, nkernels, kernel_order);
   
   
@@ -443,7 +473,7 @@ int main(int argc, char ** argv)
 
   /* now check that the team's multichannel convolution routine
      gives the same answer as the known working version */
-  check_result(output, control_output, nkernels, width, height);
+  //check_result(output, control_output, nkernels, width, height);
 
   return 0;
 }
