@@ -43,9 +43,8 @@
 /* to stop the printing of debugging information, use the following line: */
 #define DEBUGGING(_x)
 
-
-#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
-
+#define MIN(X, Y) (((X) > (Y)) ? (Y) : (X))
+#define OPENMP_THRESHHOLD 107374182400
 /* write 3d matrix to stdout */
 void write_out(int16_t *** a, int dim0, int dim1, int dim2)
 {
@@ -62,6 +61,7 @@ void write_out(int16_t *** a, int dim0, int dim1, int dim2)
     }
   }
 }
+
 
 /* create new empty 4d float matrix */
 float **** new_empty_4d_matrix_float(int dim0, int dim1, int dim2, int dim3)
@@ -260,6 +260,96 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
   }
 }
 
+int16_t *** change_image_dimension_order(int16_t *** image, int nchannels, int width, int height, int kernel_order) {
+
+  //int16_t *** new_image = new_empty_3d_matrix_int16(nchannels, width+kernel_order, height+kernel_order);
+  int temp1 = width + kernel_order; 
+  int temp2 = height + kernel_order;
+  
+  int16_t *** new_image = malloc(nchannels * sizeof(int16_t **));
+  int16_t ** mat1 = malloc(nchannels * temp1 * sizeof(int16_t *));
+  int16_t * mat2 = malloc(nchannels * temp1 * temp2 *sizeof(int16_t));
+  size_t i, j, k;
+  
+  size_t iter = temp2 / 8;
+  size_t left = temp2 % 8;
+
+ #pragma omp parallel for private(iter, left, j)
+  for(i = 0; i<nchannels; i++) {
+    new_image[i] = &(mat1[i*temp1]);
+    for( j = 0; iter > 0; iter--) {
+      new_image[i][j] = &(mat2[i*temp1*temp2 + j * temp2]);
+      new_image[i][j+1] = &(mat2[i*temp1*temp2 + (j+1) * temp2]);
+      new_image[i][j+2] = &(mat2[i*temp1*temp2 + (j+2) * temp2]);
+      new_image[i][j+3] = &(mat2[i*temp1*temp2 + (j+3) * temp2]);
+      new_image[i][j+4] = &(mat2[i*temp1*temp2 + (j+4) * temp2]);
+      new_image[i][j+5] = &(mat2[i*temp1*temp2 + (j+5) * temp2]);
+      new_image[i][j+6] = &(mat2[i*temp1*temp2 + (j+6) * temp2]);
+      new_image[i][j+7] = &(mat2[i*temp1*temp2 + (j+7) * temp2]);
+      j+=8;
+    }
+    switch(left) {
+        case 7:
+          new_image[i][j+7] = &(mat2[i*temp1*temp2 + (j+7) * temp2]);
+        case 6:
+          new_image[i][j+6] = &(mat2[i*temp1*temp2 + (j+6) * temp2]);
+        case 5:
+          new_image[i][j+5] = &(mat2[i*temp1*temp2 + (j+5) * temp2]);
+        case 4:
+          new_image[i][j+4] = &(mat2[i*temp1*temp2 + (j+4) * temp2]);
+        case 3:
+          new_image[i][j+3] = &(mat2[i*temp1*temp2 + (j+3) * temp2]);
+        case 2:
+          new_image[i][j+2] = &(mat2[i*temp1*temp2 + (j+2) * temp2]);
+        case 1:
+          new_image[i][j+1] = &(mat2[i*temp1*temp2 + (j+1) * temp2]);
+    }
+  }
+  iter = temp2 / 8;
+  left = temp2 % 8;
+
+ #pragma omp parallel for collapse(2) private(k, iter, left)
+  for(i = 0; i<nchannels; i++) {
+    for( j = 0; j<temp1; j++) {
+      for( k = 0; iter > 0; iter--) {
+        __m128i a = _mm_set_epi16( image[j][k][i], image[j][k+1][i],
+                                  image[j][k+2][i], image[j][k+3][i],
+                                  image[j][k+4][i], image[j][k+5][i],
+                                  image[j][k+6][i], image[j][k+7][i]);
+        _mm_store_si128(&new_image[i][j][k], a);   
+        k+=8;                               
+      }
+      switch(left) {
+        case 7:
+          new_image[i][j][k+7] = image[j][k+7][i];
+        case 6:
+          new_image[i][j][k+6] = image[j][k+6][i];
+        case 5:
+          new_image[i][j][k+5] = image[j][k+5][i];
+        case 4:
+          new_image[i][j][k+4] = image[j][k+4][i];
+        case 3:
+          new_image[i][j][k+3] = image[j][k+3][i];
+        case 2:
+          new_image[i][j][k+2] = image[j][k+2][i];
+        case 1:
+          new_image[i][j][k+1] = image[j][k+1][i];
+      }
+    }
+  }
+
+  // #pragma omp parallel for collapse(3)
+  // for(i = 0; i<nchannels; i++) {
+  //   for( j = 0; j<temp1; j++) {
+  //    for( k = 0; k<temp2; k++) {
+  //      new_image[i][j][k] = image[j][k][i];
+  //     }
+  //   }
+  // }    
+  return new_image;
+}
+
+
 int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel, int nkernels, int nchannels, int kernel_order) {
 
   int16_t **** new_kernel = malloc(nkernels * sizeof(int16_t***));
@@ -267,14 +357,11 @@ int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel
   int16_t ** mat2 = malloc(nkernels * kernel_order * kernel_order * sizeof(int16_t*));
   int16_t * mat3 = malloc(nkernels * kernel_order * kernel_order * nchannels * sizeof(int16_t));
   size_t i, j, k;
-
-#pragma omp parallel for schedule(guided)
-  for ( i = 0; i < nkernels; i++ ) {
+ 
+ for ( i = 0; i < nkernels; i++ ) {
     new_kernel[i] = &(mat1[i*kernel_order]);
-  //#pragma omp parallel for
     for ( j = 0; j < kernel_order; j++ ) {
       new_kernel[i][j] = &(mat2[i*kernel_order*kernel_order + j*kernel_order]);
-      //#pragma omp parallel for
       for ( k = 0; k < kernel_order; k++ ) {
         new_kernel[i][j][k] = &(mat3[i*kernel_order*kernel_order*nchannels+j*kernel_order*nchannels+k*nchannels]);
       }
@@ -282,47 +369,43 @@ int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel
   }
   
   size_t blocksize = 32;
-  #pragma omp parallel for schedule(guided)
-  for(register size_t i = 0; i<nkernels; i++) {
+
+
+
+  #pragma omp parallel for schedule(static) collapse(3) if( nchannels * nkernels * kernel_order * kernel_order > 10000000)
+  for( size_t i = 0; i<nkernels; i++) {  
     
-    // for(register size_t l1 = 0 ; l1<nchannels; l1+=blocksize) {
-    //   for(register size_t j = 0; j<kernel_order; j++) {
-    //     for(register size_t k = 0; k<kernel_order; k++) {
+    for( size_t l1 = 0 ; l1<nchannels; l1+=blocksize) {
+      for( size_t j = 0; j<kernel_order; j++) {
+        for( size_t k = 0; k<kernel_order; k++) {
           
-          	 /* Vectorized matrix transpose */
-    //       // //#pragma omp parallel for schedule(guided)
-    //       // for(size_t l = 0; l<nchannels; l+=8) {
-    //       //   __m128i a = _mm_set_epi16(kernel[i][l][j][k], kernel[i][l+1][j][k],
-    //       //                             kernel[i][l+2][j][k], kernel[i][l+3][j][k],
-    //       //                             kernel[i][l+4][j][k], kernel[i][l+5][j][k],
-    //       //                             kernel[i][l+6][j][k], kernel[i][l+7][j][k]);
+          	 /* Vectorized matrix transpose with tiling */
+          for(size_t l = 0; l<MIN(nchannels-l1, blocksize); l+=8) {
+            __m128i a = _mm_set_epi16(kernel[i][l1+l+7][j][k], kernel[i][l1+l+6][j][k],
+                                      kernel[i][l1+l+5][j][k], kernel[i][l1+l+4][j][k],
+                                      kernel[i][l1+l+3][j][k], kernel[i][l1+l+2][j][k],
+                                      kernel[i][l1+l+1][j][k], kernel[i][l1+l][j][k]);
             
-    //       //   _mm_store_si128(&new_kernel[i][j][k][l], a);
-    //       // }
-
-          	 /*
-          	 One permutation matrix transpose with loop tiling 
-          	 */
-    //       #pragma omp parallel for schedule(guided)
-    //       for(register size_t l2 = 0; l2 <MIN(nchannels-l1, blocksize) ; l2++) {
-    //         new_kernel[i][k][j][l1+l2] = kernel[i][l1+l2][j][k];
-    //       }
-    //     }
-    //   }
-    // }  
-
-
-    for(register size_t j = 0; j<kernel_order; j++) {
-      for(register size_t k = 0; k<kernel_order; k++) {
-
-        #pragma omp parallel for schedule(guided)
-        for(register size_t l = 0; l<nchannels; l++) {
-          new_kernel[i][j][k][l] = kernel[i][l][j][k];
+            _mm_store_si128(&new_kernel[i][j][k][l1+l], a);
+          }        
         }
       }
-    }
+    }  
 
-  }                    
+  //   for( size_t j = 0; j<kernel_order; j++) {
+  //     for( size_t k = 0; k<kernel_order; k++) {
+  //       for(size_t l = 0; l<nchannels; l+=8) {
+  //         __m128i a = _mm_set_epi16(kernel[i][l+7][j][k], kernel[i][l+6][j][k],
+  //                                     kernel[i][l+5][j][k], kernel[i][l+4][j][k],
+  //                                     kernel[i][l+3][j][k], kernel[i][l+2][j][k],
+  //                                     kernel[i][l+1][j][k], kernel[i][l][j][k]);
+  //         _mm_store_si128(&new_kernel[i][j][k][l], a);
+          
+  //         //new_kernel[i][j][k][l] = kernel[i][l][j][k];
+  //       }
+  //     }
+  //   }
+  }    
   return new_kernel;  
 }
 
@@ -333,127 +416,162 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
 {
   kernels = change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
   int h, w, x, y, c, m;
-#pragma omp parallel for schedule(static) collapse(3)
-    for ( m = 0; m < nkernels; m++ ) {
-      for ( w = 0; w < width; w++ ) {
-        for ( h = 0; h < height; h++ ) {
-          
-       	  int sum = 0.0;
-          #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)
-            for ( x = 0; x < kernel_order; x++) {
-              for ( y = 0; y < kernel_order; y++ ) {
-                for ( c = 0; c < nchannels; c+=32 ) {
-                  
-                  size_t temp1 = c;
-                  size_t temp2 = c+8;
-                  size_t temp3 = c+16;
-                  size_t temp4 = c+24;
-                  __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
-                  __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
-                  __m128i c1 = _mm_madd_epi16(a1, b1);
-                  __m128i d1 = _mm_hadd_epi32(c1, c1);
-                  d1 =  _mm_hadd_epi32(d1, d1);
-                  sum +=  _mm_extract_epi32(d1, 0);
-
-                  __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
-                  __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
-                  __m128i c2 = _mm_madd_epi16(a2 , b2);
-                  __m128i d2 = _mm_hadd_epi32(c2, c2);
-                  d2 =  _mm_hadd_epi32(d2, d2);
-                  sum +=  _mm_extract_epi32(d2, 0);
-                  
-                  __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
-                  __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
-                  __m128i c3 = _mm_madd_epi16(a3, b3);
-                  __m128i d3 = _mm_hadd_epi32(c3, c3);
-                  d3 =  _mm_hadd_epi32(d3, d3);
-                  sum +=  _mm_extract_epi32(d3, 0);
-                  
-                  __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
-                  __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
-                  __m128i c4 = _mm_madd_epi16(a4, b4);
-                  __m128i d4 = _mm_hadd_epi32(c4, c4);
-                  d4 =  _mm_hadd_epi32(d4, d4);
-                  sum +=  _mm_extract_epi32(d4, 0);
-                  
-                }
-
-                // for( c = 0; c < nchannels; c+= 8) {
-                //   __m128i a1 = _mm_load_si128(&image[w+x][h+y][c]);
-                //   __m128i b1 = _mm_load_si128(&kernels[m][x][y][ c]);
-                //   __m128i c1 = _mm_madd_epi16(a1, b1);
-                //   __m128i d1 = _mm_hadd_epi32(c1, c1);
-                //   d1 =  _mm_hadd_epi32(d1, d1);
-                //   sum +=  _mm_extract_epi32(d1, 0);
-                // }
-              
-              	/*
-		 	int sum1 = 0;
-         	int sum2 = 0;
-          	int sum3 = 0;
-          	int sum4 = 0;
-          	#pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum1, sum2, sum3, sum4)
-            for ( x = 0; x < kernel_order; x++) {
-              for ( y = 0; y < kernel_order; y++ ) {
-                for ( c = 0; c < nchannels; c+=32 ) {
-                  
-                  size_t addr1 = c;
-                  size_t addr2 = c+8;
-                  size_t addr3 = c+16;
-                  size_t addr4 = c+24;
-
-                  __m128i a1 = _mm_load_si128(&image[w+x][h+y][addr1]);
-                  __m128i b1 = _mm_load_si128(&kernels[m][x][y][addr1]);
-                  a1 = _mm_madd_epi16(a1, b1);
-                  a1 = _mm_hadd_epi32(a1, a1);
-                  a1 =  _mm_hadd_epi32(a1, a1);
-                  sum1 +=  _mm_extract_epi32(a1, 0);
-
-                  __m128i a2 = _mm_load_si128(&image[w+x][h+y][addr2]);
-                  __m128i b2 = _mm_load_si128(&kernels[m][x][y][addr2]);
-                  a2 = _mm_madd_epi16(a2 , b2);
-                  a2 = _mm_hadd_epi32(a2, a2);
-                  a2 =  _mm_hadd_epi32(a2, a2);
-                  sum2 +=  _mm_extract_epi32(a2, 0);
-                  
-                  __m128i a3 = _mm_load_si128(&image[w+x][h+y][addr3]);
-                  __m128i b3 = _mm_load_si128(&kernels[m][x][y][addr3]);
-                  a3 = _mm_madd_epi16(a3, b3);
-                  a3 = _mm_hadd_epi32(a3, a3);
-                  a3 =  _mm_hadd_epi32(a3, a3);
-                  sum3 +=  _mm_extract_epi32(a3, 0);
-                  
-                  __m128i a4 = _mm_load_si128(&image[w+x][h+y][addr4]);
-                  __m128i b4 = _mm_load_si128(&kernels[m][x][y][addr4]);
-                  a4 = _mm_madd_epi16(a4, b4);
-                  a4 = _mm_hadd_epi32(a4, a4);
-                  a4 =  _mm_hadd_epi32(a4, a4);
-                  sum4 +=  _mm_extract_epi32(a4, 0);
-                  
-                }
-
-              	*/
-              }
-            }  
-      
-        /*          None vectorized code, can maybe transpose image or kernels (depending on size) for faster code
-					but last time i checked, no upgrade.
-          #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)        
-            for( c = 0; c < nchannels; c++) {
-              for( x = 0; x < kernel_order; x++) {
-                for( y = 0; y < kernel_order; y++) {
-                  //sum += (double) image[w+x][h+y][c] * (double) kernels[m][c][x][y];
-                  sum += (double) image[c][w+x][h+y] * (double) kernels[m][c][x][y];
+  int threshhold = kernel_order * kernel_order * nchannels * nkernels;
+  if( threshhold > 25000000 ) {
+  // if(0) {
+    printf("1\n");
+    #pragma omp parallel for collapse(3) 
+      for ( m = 0; m < nkernels; m++ ) {
+        for ( w = 0; w < width; w++ ) {
+          for ( h = 0; h < height; h++ ) {
+              long sum = 0L;
+              #pragma omp parallel for collapse(3) reduction(+:sum)
+              for ( x = 0; x < kernel_order; x++) {
+                for ( y = 0; y < kernel_order; y++ ) {
+                  for( c = 0; c < nchannels; c+= 32) {
+                    size_t temp1 = c;
+                    size_t temp2 = c+8;
+                    size_t temp3 = c+16;
+                    size_t temp4 = c+24;
+                
+                    __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
+                    __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
+                    a1 = _mm_madd_epi16(a1, b1);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    a1 =  _mm_hadd_epi32(a1, a1);
+                    sum +=  _mm_extract_epi32(a1, 0);
+                
+                    __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
+                    __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
+                    a2 = _mm_madd_epi16(a2 , b2);
+                    a2 = _mm_hadd_epi32(a2, a2);
+                    a2 =  _mm_hadd_epi32(a2, a2);
+                    sum +=  _mm_extract_epi32(a2, 0);
+                
+                    __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
+                    __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
+                    a3 = _mm_madd_epi16(a3, b3);
+                    a3 = _mm_hadd_epi32(a3, a3);
+                    a3 =  _mm_hadd_epi32(a3, a3);
+                    sum +=  _mm_extract_epi32(a3, 0);     
+                    
+                    __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
+                    __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
+                    a4 = _mm_madd_epi16(a4, b4);
+                    a4 = _mm_hadd_epi32(a4, a4);
+                    a4 =  _mm_hadd_epi32(a4, a4);
+                    sum +=  _mm_extract_epi32(a4, 0);
+                  }
                 }
               }
-            }      
-          */
+              output[m][w][h] = (float) sum;
+          }
+        }
+      }    
+  }
 
-          output[m][w][h] = (float) sum;
+  // else if(threshhold > 2000000 ) {
+  else if((width >= 256 && height >= 256 && kernel_order >= 3) || (width >= 64 && height >= 64 && nchannels >= 128 && nkernels >= 128)) {  
+    printf("2\n");
+    #pragma omp parallel for collapse(3)
+      for ( m = 0; m < nkernels; m++ ) {
+        for ( w = 0; w < width; w++ ) {
+          for ( h = 0; h < height; h++ ) {
+            long sum = 0L;
+              for ( x = 0; x < kernel_order; x++) {
+                for ( y = 0; y < kernel_order; y++ ) {
+                for ( c = 0; c < nchannels; c+=32 ) {      
+                    size_t temp1 = c;
+                    size_t temp2 = c+8;
+                    size_t temp3 = c+16;
+                    size_t temp4 = c+24;
+                
+                    __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
+                    __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
+                    a1 = _mm_madd_epi16(a1, b1);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    a1 =  _mm_hadd_epi32(a1, a1);
+                    sum +=  _mm_extract_epi32(a1, 0);
+                
+                    __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
+                    __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
+                    a2 = _mm_madd_epi16(a2 , b2);
+                    a2 = _mm_hadd_epi32(a2, a2);
+                    a2 =  _mm_hadd_epi32(a2, a2);
+                    sum +=  _mm_extract_epi32(a2, 0);
+                
+                    __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
+                    __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
+                    a3 = _mm_madd_epi16(a3, b3);
+                    a3 = _mm_hadd_epi32(a3, a3);
+                    a3 =  _mm_hadd_epi32(a3, a3);
+                    sum +=  _mm_extract_epi32(a3, 0);     
+                    
+                    __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
+                    __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
+                    a4 = _mm_madd_epi16(a4, b4);
+                    a4 = _mm_hadd_epi32(a4, a4);
+                    a4 =  _mm_hadd_epi32(a4, a4);
+                    sum +=  _mm_extract_epi32(a4, 0);
+                  }
+                }
+              }   
+              output[m][w][h] = (float) sum;
+          }    
         }
       }
-    }
   }
+
+  else {
+    printf("3\n");
+    for ( m = 0; m < nkernels; m++ ) {
+        for ( w = 0; w < width; w++ ) {
+          for ( h = 0; h < height; h++ ) {
+              long sum = 0L;
+              for ( x = 0; x < kernel_order; x++) {
+                for ( y = 0; y < kernel_order; y++ ) {
+                for ( c = 0; c < nchannels; c+=32 ) {      
+                    size_t temp1 = c;
+                    size_t temp2 = c+8;
+                    size_t temp3 = c+16;
+                    size_t temp4 = c+24;
+                
+                    __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
+                    __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
+                    a1 = _mm_madd_epi16(a1, b1);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    a1 =  _mm_hadd_epi32(a1, a1);
+                    sum +=  _mm_extract_epi32(a1, 0);
+                
+                    __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
+                    __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
+                    a2 = _mm_madd_epi16(a2 , b2);
+                    a2 = _mm_hadd_epi32(a2, a2);
+                    a2 =  _mm_hadd_epi32(a2, a2);
+                    sum +=  _mm_extract_epi32(a2, 0);
+                
+                    __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
+                    __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
+                    a3 = _mm_madd_epi16(a3, b3);
+                    a3 = _mm_hadd_epi32(a3, a3);
+                    a3 =  _mm_hadd_epi32(a3, a3);
+                    sum +=  _mm_extract_epi32(a3, 0);     
+                    
+                    __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
+                    __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
+                    a4 = _mm_madd_epi16(a4, b4);
+                    a4 = _mm_hadd_epi32(a4, a4);
+                    a4 =  _mm_hadd_epi32(a4, a4);
+                    sum +=  _mm_extract_epi32(a4, 0);
+                  }
+                }
+              }
+              output[m][w][h] = (float) sum;
+          }    
+        }
+      }
+  } 
+}
 
 int main(int argc, char ** argv)
 {
@@ -499,9 +617,28 @@ int main(int argc, char ** argv)
 
   //DEBUGGING(write_out(A, a_dim1, a_dim2));
 
+  gettimeofday(&start_time, NULL);
   /* use a simple multichannel convolution routine to produce control result */
-  /*multichannel_conv(image, kernels, control_output, width,
+  multichannel_conv(image, kernels, control_output, width,
                     height, nchannels, nkernels, kernel_order);
+
+  gettimeofday(&stop_time, NULL);
+  long long mul_time_1 = (stop_time.tv_sec - start_time.tv_sec) * 1000000L +
+    (stop_time.tv_usec - start_time.tv_usec);
+  /* record starting time of team's code*/
+  gettimeofday(&start_time, NULL);
+
+  /* perform student team's multichannel convolution */
+  change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
+
+  /* record finishing time */
+  gettimeofday(&stop_time, NULL);
+  mul_time = (stop_time.tv_sec - start_time.tv_sec) * 1000000L +
+    (stop_time.tv_usec - start_time.tv_usec);
+  printf("Kernel transpose time: %lld microseconds\n", mul_time);
+
+  
+  
   
   
   /* record starting time of team's code*/
@@ -516,12 +653,12 @@ int main(int argc, char ** argv)
   mul_time = (stop_time.tv_sec - start_time.tv_sec) * 1000000L +
     (stop_time.tv_usec - start_time.tv_usec);
   printf("Team conv time: %lld microseconds\n", mul_time);
-
+  printf("Speed up of %lld\n", mul_time_1 / mul_time);
   DEBUGGING(write_out(output, nkernels, width, height));
 
   /* now check that the team's multichannel convolution routine
      gives the same answer as the known working version */
-  //check_result(output, control_output, nkernels, width, height);
+  check_result(output, control_output, nkernels, width, height);
 
   return 0;
 }
