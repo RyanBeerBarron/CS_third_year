@@ -261,7 +261,6 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
 }
 
 int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel, int nkernels, int nchannels, int kernel_order) {
-  
 
   int16_t **** new_kernel = malloc(nkernels * sizeof(int16_t***));
   int16_t *** mat1 = malloc(nkernels * kernel_order * sizeof(int16_t**));
@@ -281,6 +280,7 @@ int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel
       }
     }
   }
+  
   size_t blocksize = 32;
   #pragma omp parallel for schedule(guided)
   for(register size_t i = 0; i<nkernels; i++) {
@@ -289,7 +289,7 @@ int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel
     //   for(register size_t j = 0; j<kernel_order; j++) {
     //     for(register size_t k = 0; k<kernel_order; k++) {
           
-          
+          	 /* Vectorized matrix transpose */
     //       // //#pragma omp parallel for schedule(guided)
     //       // for(size_t l = 0; l<nchannels; l+=8) {
     //       //   __m128i a = _mm_set_epi16(kernel[i][l][j][k], kernel[i][l+1][j][k],
@@ -299,7 +299,10 @@ int16_t **** restrict change_kernel_dimension_order(int16_t **** restrict kernel
             
     //       //   _mm_store_si128(&new_kernel[i][j][k][l], a);
     //       // }
-          
+
+          	 /*
+          	 One permutation matrix transpose with loop tiling 
+          	 */
     //       #pragma omp parallel for schedule(guided)
     //       for(register size_t l2 = 0; l2 <MIN(nchannels-l1, blocksize) ; l2++) {
     //         new_kernel[i][k][j][l1+l2] = kernel[i][l1+l2][j][k];
@@ -334,12 +337,11 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
     for ( m = 0; m < nkernels; m++ ) {
       for ( w = 0; w < width; w++ ) {
         for ( h = 0; h < height; h++ ) {
-          register int sum = 0.0;
           
+       	  int sum = 0.0;
           #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)
             for ( x = 0; x < kernel_order; x++) {
               for ( y = 0; y < kernel_order; y++ ) {
-              
                 for ( c = 0; c < nchannels; c+=32 ) {
                   
                   size_t temp1 = c;
@@ -385,11 +387,57 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
                 //   sum +=  _mm_extract_epi32(d1, 0);
                 // }
               
-              
+              	/*
+		 	int sum1 = 0;
+         	int sum2 = 0;
+          	int sum3 = 0;
+          	int sum4 = 0;
+          	#pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum1, sum2, sum3, sum4)
+            for ( x = 0; x < kernel_order; x++) {
+              for ( y = 0; y < kernel_order; y++ ) {
+                for ( c = 0; c < nchannels; c+=32 ) {
+                  
+                  size_t addr1 = c;
+                  size_t addr2 = c+8;
+                  size_t addr3 = c+16;
+                  size_t addr4 = c+24;
+
+                  __m128i a1 = _mm_load_si128(&image[w+x][h+y][addr1]);
+                  __m128i b1 = _mm_load_si128(&kernels[m][x][y][addr1]);
+                  a1 = _mm_madd_epi16(a1, b1);
+                  a1 = _mm_hadd_epi32(a1, a1);
+                  a1 =  _mm_hadd_epi32(a1, a1);
+                  sum1 +=  _mm_extract_epi32(a1, 0);
+
+                  __m128i a2 = _mm_load_si128(&image[w+x][h+y][addr2]);
+                  __m128i b2 = _mm_load_si128(&kernels[m][x][y][addr2]);
+                  a2 = _mm_madd_epi16(a2 , b2);
+                  a2 = _mm_hadd_epi32(a2, a2);
+                  a2 =  _mm_hadd_epi32(a2, a2);
+                  sum2 +=  _mm_extract_epi32(a2, 0);
+                  
+                  __m128i a3 = _mm_load_si128(&image[w+x][h+y][addr3]);
+                  __m128i b3 = _mm_load_si128(&kernels[m][x][y][addr3]);
+                  a3 = _mm_madd_epi16(a3, b3);
+                  a3 = _mm_hadd_epi32(a3, a3);
+                  a3 =  _mm_hadd_epi32(a3, a3);
+                  sum3 +=  _mm_extract_epi32(a3, 0);
+                  
+                  __m128i a4 = _mm_load_si128(&image[w+x][h+y][addr4]);
+                  __m128i b4 = _mm_load_si128(&kernels[m][x][y][addr4]);
+                  a4 = _mm_madd_epi16(a4, b4);
+                  a4 = _mm_hadd_epi32(a4, a4);
+                  a4 =  _mm_hadd_epi32(a4, a4);
+                  sum4 +=  _mm_extract_epi32(a4, 0);
+                  
+                }
+
+              	*/
               }
             }  
       
-        /*          
+        /*          None vectorized code, can maybe transpose image or kernels (depending on size) for faster code
+					but last time i checked, no upgrade.
           #pragma omp parallel for schedule(guided) collapse(3) reduction(+:sum)        
             for( c = 0; c < nchannels; c++) {
               for( x = 0; x < kernel_order; x++) {
