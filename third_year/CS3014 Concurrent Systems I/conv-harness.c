@@ -420,7 +420,7 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
   int h, w, x, y, c, m;
   int threshhold = kernel_order * kernel_order * nchannels * nkernels;
   //if( threshhold > 25000000 ) {
-   if(1) {
+   if(0) {
     printf("1\n");
     #pragma omp parallel for collapse(3) 
       for ( m = 0; m < nkernels; m++ ) {
@@ -467,14 +467,14 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
       }    
   }
 
-  // else if(threshhold > 2000000 ) {
-  else if((width >= 256 && height >= 256 && kernel_order >= 3) || (width >= 64 && height >= 64 && nchannels >= 128 && nkernels >= 128)) {  
+   else if(1) {
+  //else if((width >= 256 && height >= 256 && kernel_order >= 3) || (width >= 64 && height >= 64 && nchannels >= 128 && nkernels >= 128)) {  
     printf("2\n");
     #pragma omp parallel for collapse(3)
       for ( m = 0; m < nkernels; m++ ) {
         for ( w = 0; w < width; w++ ) {
           for ( h = 0; h < height; h++ ) {
-            long sum = 0L;
+            int sum = 0;
               for ( x = 0; x < kernel_order; x++) {
                 for ( y = 0; y < kernel_order; y++ ) {
                 for ( c = 0; c < nchannels; c+=32 ) {      
