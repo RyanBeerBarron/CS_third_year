@@ -462,9 +462,11 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
 	                  }
 	                }
 	              }
-	              
-              total =  _mm_add_epi32(total, sum);
-	            }  
+	            #pragma omp critical
+	            {   
+            	  total =  _mm_add_epi32(total, sum);
+	            }
+	        }  
               total = _mm_hadd_epi32(total, total);
               total = _mm_hadd_epi32(total, total);
               output[m][w][h] = (float) _mm_extract_epi32(total, 0.0);
