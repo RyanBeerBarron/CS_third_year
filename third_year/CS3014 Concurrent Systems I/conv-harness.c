@@ -483,33 +483,29 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
                     size_t temp3 = c+16;
                     size_t temp4 = c+24;
                 
+                  
                     __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
                     __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
                     a1 = _mm_madd_epi16(a1, b1);
-                    a1 = _mm_hadd_epi32(a1, a1);
-                    a1 =  _mm_hadd_epi32(a1, a1);
-                    sum +=  _mm_extract_epi32(a1, 0);
                 
                     __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
                     __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
                     a2 = _mm_madd_epi16(a2 , b2);
-                    a2 = _mm_hadd_epi32(a2, a2);
-                    a2 =  _mm_hadd_epi32(a2, a2);
-                    sum +=  _mm_extract_epi32(a2, 0);
                 
                     __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
                     __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
-                    a3 = _mm_madd_epi16(a3, b3);
-                    a3 = _mm_hadd_epi32(a3, a3);
-                    a3 =  _mm_hadd_epi32(a3, a3);
-                    sum +=  _mm_extract_epi32(a3, 0);     
+                    a3 = _mm_madd_epi16(a3, b3);     
                     
                     __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
                     __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
                     a4 = _mm_madd_epi16(a4, b4);
-                    a4 = _mm_hadd_epi32(a4, a4);
-                    a4 =  _mm_hadd_epi32(a4, a4);
-                    sum +=  _mm_extract_epi32(a4, 0);
+
+                    a1 = _mm_add_epi32(a1, a2);
+                    a3 = _mm_add_epi32(a3, a4);
+                    a1 = _mm_add_epi32(a1, a3);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    sum +=  _mm_extract_epi32(a1, 0);
                   }
                 }
               }   
@@ -533,33 +529,29 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
                     size_t temp3 = c+16;
                     size_t temp4 = c+24;
                 
+                
                     __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
                     __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
                     a1 = _mm_madd_epi16(a1, b1);
-                    a1 = _mm_hadd_epi32(a1, a1);
-                    a1 =  _mm_hadd_epi32(a1, a1);
-                    sum +=  _mm_extract_epi32(a1, 0);
                 
                     __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
                     __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
                     a2 = _mm_madd_epi16(a2 , b2);
-                    a2 = _mm_hadd_epi32(a2, a2);
-                    a2 =  _mm_hadd_epi32(a2, a2);
-                    sum +=  _mm_extract_epi32(a2, 0);
                 
                     __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
                     __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
-                    a3 = _mm_madd_epi16(a3, b3);
-                    a3 = _mm_hadd_epi32(a3, a3);
-                    a3 =  _mm_hadd_epi32(a3, a3);
-                    sum +=  _mm_extract_epi32(a3, 0);     
+                    a3 = _mm_madd_epi16(a3, b3);     
                     
                     __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
                     __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
                     a4 = _mm_madd_epi16(a4, b4);
-                    a4 = _mm_hadd_epi32(a4, a4);
-                    a4 =  _mm_hadd_epi32(a4, a4);
-                    sum +=  _mm_extract_epi32(a4, 0);
+
+                    a1 = _mm_add_epi32(a1, a2);
+                    a3 = _mm_add_epi32(a3, a4);
+                    a1 = _mm_add_epi32(a1, a3);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    sum +=  _mm_extract_epi32(a1, 0);
                   }
                 }
               }
