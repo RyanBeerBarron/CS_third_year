@@ -419,57 +419,49 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
   kernels = change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
   int h, w, x, y, c, m;
   int threshhold = kernel_order * kernel_order * nchannels * nkernels;
-  //if( threshhold > 25000000 ) {
-  if(1) {
+  if( threshhold > 25000000 ) {
+  // if(0) {
     printf("1\n");
     #pragma omp parallel for collapse(3) 
       for ( m = 0; m < nkernels; m++ ) {
         for ( w = 0; w < width; w++ ) {
           for ( h = 0; h < height; h++ ) {
-              __m128i sum = _mm_setzero_si128();
+              long sum = 0L;
+              #pragma omp parallel for collapse(3) reduction(+:sum)
+              for ( x = 0; x < kernel_order; x++) {
+                for ( y = 0; y < kernel_order; y++ ) {
+                  for( c = 0; c < nchannels; c+= 32) {
+                    size_t temp1 = c;
+                    size_t temp2 = c+8;
+                    size_t temp3 = c+16;
+                    size_t temp4 = c+24;
+                
+                    __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
+                    __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
+                    a1 = _mm_madd_epi16(a1, b1);
+                
+                    __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
+                    __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
+                    a2 = _mm_madd_epi16(a2 , b2);
+                
+                    __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
+                    __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
+                    a3 = _mm_madd_epi16(a3, b3);     
+                    
+                    __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
+                    __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
+                    a4 = _mm_madd_epi16(a4, b4);
 
-              __m128i total = _mm_setzero_si128();
-              #pragma omp parallel  private(sum) 
-              {
-              	#pragma omp for collapse(3)
-	              for ( x = 0; x < kernel_order; x++) {
-	                for ( y = 0; y < kernel_order; y++ ) {
-	                  for( c = 0; c < nchannels; c+= 32) {
-	                    size_t temp1 = c;
-	                    size_t temp2 = c+8;
-	                    size_t temp3 = c+16;
-	                    size_t temp4 = c+24;
-	                
-	                    __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
-	                    __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
-	                    a1 = _mm_madd_epi16(a1, b1);
-	                    sum = _mm_add_epi32(a1, sum);
-
-	                    __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
-	                    __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
-	                    a2 = _mm_madd_epi16(a2 , b2);
-	                    sum =  _mm_add_epi32(a2, sum);
-	                
-	                    __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
-	                    __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
-	                    a3 = _mm_madd_epi16(a3, b3);
-	                    sum =  _mm_add_epi32(a3, sum);     
-	                    
-	                    __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
-	                    __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
-	                    a4 = _mm_madd_epi16(a4, b4);
-	                    sum =  _mm_add_epi32(a4, sum);
-	                  }
-	                }
-	              }
-	            #pragma omp critical
-	            {   
-            	  total =  _mm_add_epi32(total, sum);
-	            }
-	        }  
-              total = _mm_hadd_epi32(total, total);
-              total = _mm_hadd_epi32(total, total);
-              output[m][w][h] = (float) _mm_extract_epi32(total, 0.0);
+                    a1 = _mm_add_epi32(a1, a2);
+                    a3 = _mm_add_epi32(a3, a4);
+                    a1 = _mm_add_epi32(a1, a3);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    a1 = _mm_hadd_epi32(a1, a1);
+                    sum +=  _mm_extract_epi32(a1, 0);
+                  }
+                }
+              }
+              output[m][w][h] = (float) sum;
           }
         }
       }    
