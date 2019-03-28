@@ -260,6 +260,8 @@ void multichannel_conv(int16_t *** image, int16_t **** kernels,
   }
 }
 
+
+/* Old image transpose function, used before the vectorization, uses some dynamic loop unrolling */
 int16_t *** change_image_dimension_order(int16_t *** image, int nchannels, int width, int height, int kernel_order) {
 
   //int16_t *** new_image = new_empty_3d_matrix_int16(nchannels, width+kernel_order, height+kernel_order);
@@ -424,7 +426,7 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
       for ( m = 0; m < nkernels; m++ ) {
         for ( w = 0; w < width; w++ ) {
           for ( h = 0; h < height; h++ ) {
-              long sum = 0L;
+              __m128i sum = _mm_setzero_si128();
               #pragma omp parallel for collapse(3) reduction(+:sum)
               for ( x = 0; x < kernel_order; x++) {
                 for ( y = 0; y < kernel_order; y++ ) {
@@ -437,34 +439,28 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
                     __m128i a1 = _mm_load_si128(&image[w+x][h+y][temp1]);
                     __m128i b1 = _mm_load_si128(&kernels[m][x][y][temp1]);
                     a1 = _mm_madd_epi16(a1, b1);
-                    a1 = _mm_hadd_epi32(a1, a1);
-                    a1 =  _mm_hadd_epi32(a1, a1);
-                    sum +=  _mm_extract_epi32(a1, 0);
-                
+                    sum = _mm_add_epi32(a1, sum);
+
                     __m128i a2 = _mm_load_si128(&image[w+x][h+y][temp2]);
                     __m128i b2 = _mm_load_si128(&kernels[m][x][y][temp2]);
                     a2 = _mm_madd_epi16(a2 , b2);
-                    a2 = _mm_hadd_epi32(a2, a2);
-                    a2 =  _mm_hadd_epi32(a2, a2);
-                    sum +=  _mm_extract_epi32(a2, 0);
+                    sum =  _mm_add_epi32(a2, sum);
                 
                     __m128i a3 = _mm_load_si128(&image[w+x][h+y][temp3]);
                     __m128i b3 = _mm_load_si128(&kernels[m][x][y][temp3]);
                     a3 = _mm_madd_epi16(a3, b3);
-                    a3 = _mm_hadd_epi32(a3, a3);
-                    a3 =  _mm_hadd_epi32(a3, a3);
-                    sum +=  _mm_extract_epi32(a3, 0);     
+                    sum =  _mm_add_epi32(a3, sum);     
                     
                     __m128i a4 = _mm_load_si128(&image[w+x][h+y][temp4]);
                     __m128i b4 = _mm_load_si128(&kernels[m][x][y][temp4]);
                     a4 = _mm_madd_epi16(a4, b4);
-                    a4 = _mm_hadd_epi32(a4, a4);
-                    a4 =  _mm_hadd_epi32(a4, a4);
-                    sum +=  _mm_extract_epi32(a4, 0);
+                    sum =  _mm_add_epi32(a4, sum);
                   }
                 }
               }
-              output[m][w][h] = (float) sum;
+              sum = _mm_hadd_epi32(sum, sum);
+              sum = _mm_hadd_epi32(sum, sum);
+              output[m][w][h] = (float) _mm_extract_epi32(sum, 0.0);
           }
         }
       }    
