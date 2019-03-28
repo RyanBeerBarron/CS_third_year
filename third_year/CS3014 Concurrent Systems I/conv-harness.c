@@ -474,7 +474,7 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
       for ( m = 0; m < nkernels; m++ ) {
         for ( w = 0; w < width; w++ ) {
           for ( h = 0; h < height; h++ ) {
-            int sum = 0;
+            long sum = 0L;
               for ( x = 0; x < kernel_order; x++) {
                 for ( y = 0; y < kernel_order; y++ ) {
                 for ( c = 0; c < nchannels; c+=32 ) {      
