@@ -419,8 +419,8 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
   kernels = change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
   int h, w, x, y, c, m;
   int threshhold = kernel_order * kernel_order * nchannels * nkernels;
-  if( threshhold > 25000000 ) {
-  // if(0) {
+  //if( threshhold > 25000000 ) {
+   if(1) {
     printf("1\n");
     #pragma omp parallel for collapse(3) 
       for ( m = 0; m < nkernels; m++ ) {
