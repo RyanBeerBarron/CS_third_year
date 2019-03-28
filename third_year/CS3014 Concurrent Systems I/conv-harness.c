@@ -419,15 +419,16 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
   kernels = change_kernel_dimension_order(kernels, nkernels, nchannels, kernel_order);
   int h, w, x, y, c, m;
   int threshhold = kernel_order * kernel_order * nchannels * nkernels;
-  if( threshhold > 25000000 ) {
-  // if(0) {
+  //if( threshhold > 25000000 ) {
+  if(1) {
     printf("1\n");
     #pragma omp parallel for collapse(3) 
       for ( m = 0; m < nkernels; m++ ) {
         for ( w = 0; w < width; w++ ) {
           for ( h = 0; h < height; h++ ) {
               __m128i sum = _mm_setzero_si128();
-              #pragma omp parallel for collapse(3) reduction(+:sum)
+
+              #pragma omp parallel for collapse(3) private(sum)
               for ( x = 0; x < kernel_order; x++) {
                 for ( y = 0; y < kernel_order; y++ ) {
                   for( c = 0; c < nchannels; c+= 32) {
@@ -458,9 +459,11 @@ inline static void team_conv(int16_t *** restrict image,  int16_t **** restrict 
                   }
                 }
               }
-              sum = _mm_hadd_epi32(sum, sum);
-              sum = _mm_hadd_epi32(sum, sum);
-              output[m][w][h] = (float) _mm_extract_epi32(sum, 0.0);
+              __m128i total = _mm_setzero_si128();
+              total =  _mm_add_epi32(total, sum);
+              total = _mm_hadd_epi32(total, total);
+              total = _mm_hadd_epi32(total, total);
+              output[m][w][h] = (float) _mm_extract_epi32(total, 0.0);
           }
         }
       }    
