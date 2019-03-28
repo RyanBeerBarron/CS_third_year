@@ -516,8 +516,8 @@ __m128i total = _mm_setzero_si128();
       }    
   }
 
-   else if(1) {
-  //else if((width >= 256 && height >= 256 && kernel_order >= 3) || (width >= 64 && height >= 64 && nchannels >= 128)) {  
+  // else if(1) {
+  else if((width >= 256 && height >= 256 && kernel_order >= 3) || (width >= 64 && height >= 64 && nchannels >= 128)) {  
     printf("2\n");
     #pragma omp parallel for collapse(3)
       for ( m = 0; m < nkernels; m++ ) {
