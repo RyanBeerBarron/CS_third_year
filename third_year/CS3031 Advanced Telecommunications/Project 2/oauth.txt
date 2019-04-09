@@ -1,0 +1,9 @@
+from google_auth_oauthlib.flow import InstalledAppFlow
+
+flow = InstalledAppFlow.from_client_secrets_file(
+    'client_secret.json',
+    scopes=['https://www.googleapis.com/auth/drive.metadata.readonly'])
+
+
+
+https://developers.google.com/api-client-library/python/auth/installed-app
